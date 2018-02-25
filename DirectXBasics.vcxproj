@@ -14,7 +14,7 @@
     <ProjectGuid>{B8507382-E2CE-463D-BCF4-C7BEB4D8D9D4}</ProjectGuid>
     <RootNamespace>DirectXBasics</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
-    <ProjectName>Game Engine</ProjectName>
+    <ProjectName>DirectXBasics</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
