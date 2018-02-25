@@ -1,9 +1,11 @@
 #pragma once
 #include "Sprite.h"
+#include "Model.h"
 
 class Entity {
 public:
 	Entity(int x, int y, int z, Sprite* sprite, int initHealth);
+	Entity(int x, int y, int z, Model * model, int initHealth);
 	virtual ~Entity();
 
 
@@ -53,7 +55,14 @@ public:
 	*
 	* @return bool Whether this entity can be drawn.
 	*/
-	bool IsDrawable() const;
+	bool IsDrawable2D() const;
+	/** Is Drawable
+	*
+	* Returns whether this entity can be drawn.
+	*
+	* @return bool Whether this entity can be drawn.
+	*/
+	bool IsDrawable3D() const;
 	/** Get Sprite
 	*
 	* Returns this Entities Sprite pointer.
@@ -119,6 +128,7 @@ private:
 
 	bool bDrawable;
 	Sprite* mSprite;
+	Model* mModel;
 
 	bool b3D;
 	int mX;

@@ -5,3 +5,4 @@
 #define RESOLUTION_Y 720
 #define IS_WINDOWED false
 #define IMAGE_DISPLAYED "zen.bmp"
+#define MODEL_DISPLAYED "Tiger.x"

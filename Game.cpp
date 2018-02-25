@@ -14,9 +14,14 @@ void Game::GameInit(HWND hwnd)
 	gfx.GraphicsInit(hwnd);
 
 	//Initialize Entities
-	Sprite* testSprite = new Sprite(IMAGE_DISPLAYED);
-	testSprite->ResizeSprite(RESOLUTION_X, RESOLUTION_Y);
-	CreateInstance(new Entity(0, 0, 0, testSprite, 0));
+			/*
+			**Entity Creation Example:**
+			Sprite* testSprite = new Sprite(IMAGE_DISPLAYED);
+			testSprite->ResizeSprite(RESOLUTION_X, RESOLUTION_Y);
+			CreateInstance(new Entity(0, 0, 0, testSprite, 0));
+			*/
+	Model* testModel = new Model(MODEL_DISPLAYED);
+	CreateInstance(new Entity(0, 0, 0, testModel, 0));
 }
 
 void Game::GameLoop()

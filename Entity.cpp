@@ -8,9 +8,40 @@ Entity::Entity(int x, int y, int z, Sprite* sprite, int initHealth)
 	, mHealth(initHealth)
 	, mMaxHealth(initHealth)
 {
+	//Sprite Related
+	b3D = false;
 	if (sprite == nullptr) {
 		bDrawable = false;
 	}
+	else {
+		bDrawable = true;
+	}
+
+	//Logic Related
+	if (initHealth == 0) {
+		bAlive = false;
+	}
+}
+
+Entity::Entity(int x, int y, int z, Model* model, int initHealth)
+	: mX(x)
+	, mY(y)
+	, mZ(z)
+	, mModel(model)
+	, mHealth(initHealth)
+	, mMaxHealth(initHealth)
+{
+	//Model Related
+	if (model == nullptr) {
+		bDrawable = false;
+		b3D = false;
+	}
+	else {
+		bDrawable = true;
+		b3D = true;
+	}
+
+	//Logic Related
 	if (initHealth == 0) {
 		bAlive = false;
 	}
@@ -73,9 +104,14 @@ int Entity::GetHealth() const
 	return mHealth;
 }
 
-bool Entity::IsDrawable() const
+bool Entity::IsDrawable2D() const
 {
-	return bDrawable;
+	return bDrawable && !b3D;
+}
+
+bool Entity::IsDrawable3D() const
+{
+	return bDrawable && b3D;
 }
 
 Sprite* Entity::GetSprite() const

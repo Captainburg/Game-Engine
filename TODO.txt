@@ -1,0 +1,41 @@
+<<<<<<<<<< >>>>>>>>>>
+---***STAGE ONE***---
+<<<<<<<<<< >>>>>>>>>>
+
+GLOBALS:
+Remove global overlap and put them into their correct objects.
+
+InitD3D:
+Put into Graphics Init
+
+InitGeometry:
+Put into Model Class CTor
+
+Cleanup:
+If able to put only into model do so, otherwise put into Graphics Cleanup
+*If in model, have it be called during game cleanup, or DTor I guess.
+
+Setup Matrices:
+Slot into Graphics During  Render.(May be object dependent.)
+
+Render:
+Update Old Render.
+
+Old Winmain:
+Put into winmain. This is obvious.
+
+<<<<<<<<<< >>>>>>>>>>
+---***STAGE TWO***---
+<<<<<<<<<< >>>>>>>>>>
+
+Movement:
+Rotations/Translations on Mesh - Mouse
+Rotations/Translations on Camera - Keyboard
+
+Loading:
+Find another Mesh, Load in Both,
+Key 1 to Select Tiger, Key 2 to Select ???
+
+Lighting:
+Ambient/Point/Directional/Spot
+Can all be toggled on/off.
