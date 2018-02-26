@@ -14,14 +14,12 @@ void Game::GameInit(HWND hwnd)
 	gfx.GraphicsInit(hwnd);
 
 	//Initialize Entities
-			/*
-			**Entity Creation Example:**
-			Sprite* testSprite = new Sprite(IMAGE_DISPLAYED);
-			testSprite->ResizeSprite(RESOLUTION_X, RESOLUTION_Y);
-			CreateInstance(new Entity(0, 0, 0, testSprite, 0));
-			*/
-	Model* testModel = new Model(MODEL_DISPLAYED);
-	CreateInstance(new Entity(0, 0, 0, testModel, 0));
+	Sprite* baboonSprite = new Sprite(IMAGE_DISPLAYED);
+	baboonSprite->ResizeSprite(RESOLUTION_X, RESOLUTION_Y);
+	CreateInstance(new Entity(0, 0, 0, baboonSprite, 0));
+
+	Model* tigerModel = new Model(MODEL_DISPLAYED, gfx.getDevice());
+	CreateInstance(new Entity(0, 0, 0, tigerModel, 0));
 }
 
 void Game::GameLoop()
@@ -43,11 +41,13 @@ void Game::GameLoop()
 
 void Game::GameShutdown()
 {
+	//Destroy Entities
+	for (auto it = entities.begin(); it != entities.end(); ++it) {
+		delete (*it);
+	}
+
 	//Shutdown Graphics
 	gfx.GraphicsShutdown();
-
-	//Destroy Entities
-	//DestroyInstance(...);
 }
 
 void Game::CreateInstance(Entity* entity)

@@ -70,6 +70,13 @@ public:
 	* @return Sprite* this Entities Sprite pointer.
 	*/
 	Sprite* GetSprite() const;
+	/** Get Model
+	*
+	* Returns this Entities Model pointer.
+	*
+	* @return Model* this Entities Model pointer.
+	*/
+	Model* GetModel() const;
 
 	/** Move To (x, y, z)
 	*

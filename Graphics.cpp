@@ -45,6 +45,12 @@ void Graphics::InitDirect3DDevice(HWND hWndTarget, int Width, int Height, BOOL b
 	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 
 	pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWndTarget, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, ppDevice);
+
+	// Turn on the zbuffer
+	(*ppDevice)->SetRenderState(D3DRS_ZENABLE, TRUE); // NEW
+
+	// Turn on ambient lighting 
+	(*ppDevice)->SetRenderState(D3DRS_AMBIENT, 0xffffffff); // NEW
 }
 
 void Graphics::GraphicsInit(HWND hwnd)
@@ -85,7 +91,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 	char const *pFPS = s.c_str();
 
 	//Clear Device
-	g_pDevice->Clear(0, 0, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 25), 1.0f, 0);
+	g_pDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
 
 	//pBackSurface = the back buffer
 	g_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackSurf);
@@ -96,7 +102,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 					//---DRAW BITMAP BLOCK---//
 
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
-		if ((*it)->IsDrawable())
+		if ((*it)->IsDrawable2D())
 		{
 			//Load The Sprite to the Surface
 			LoadBitmapToSurface((*it)->GetSprite(), &pSurface, g_pDevice);
@@ -118,9 +124,32 @@ void Graphics::Render(std::vector<Entity*> entities)
 			pSurface = 0;
 		}
 	}
+					//---DRAW MODEL BLOCK---//
+
+	g_pDevice->BeginScene();
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
+		if ((*it)->IsDrawable3D())
+		{
+			// Setup the world, view, and projection matrices
+			SetupMatrices();
+
+			// Meshes are divided into subsets, one for each material. Render them in a loop
+			for (DWORD i = 0; i < (*it)->GetModel()->NumMaterials(); i++)
+			{
+				// Set the material and texture for this subset
+				g_pDevice->SetMaterial(&((*it)->GetModel()->GetMaterial())[i]);
+				g_pDevice->SetTexture(0, (*it)->GetModel()->GetTexture()[i]);
+
+				// Draw the mesh subset
+				(*it)->GetModel()->GetMesh()->DrawSubset(i);
+			}
+
+		}
+	}
+	g_pDevice->EndScene();
 
 					//---DRAW TEXT BLOCK---//
-
+	
 	//Lock the back surface
 	pBackSurf->LockRect(&LockedRect, NULL, 0);
 
@@ -139,7 +168,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 	//Clear Pointers
 	pBackSurf = 0;
 	pData = 0;
-
+	
 					//---SWAP BUFFERS---//
 	g_pDevice->Present(NULL, NULL, NULL, NULL);
 
@@ -151,6 +180,40 @@ void Graphics::Render(std::vector<Entity*> entities)
 		lastFrame = GetTickCount();
 	}
 	frameCount++;
+}
+
+void Graphics::SetupMatrices() {
+
+	// For our world matrix, we will just leave it as the identity
+	D3DXMATRIXA16 matWorld;
+	D3DXMatrixRotationY(&matWorld, timeGetTime() / 1000.0f); //This Rotates the Tiger
+	g_pDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+	// Set up our view matrix. A view matrix can be defined given an eye point,
+	// a point to lookat, and a direction for which way is up. Here, we set the
+	// eye five units back along the z-axis and up three units, look at the 
+	// origin, and define "up" to be in the y-direction.
+	D3DXVECTOR3 vEyePt(0.0f, 3.0f, -5.0f);
+	D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
+	D3DXMATRIXA16 matView;
+	D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
+	g_pDevice->SetTransform(D3DTS_VIEW, &matView);
+
+	// For the projection matrix, we set up a perspective transform (which
+	// transforms geometry from 3D view space to 2D viewport space, with
+	// a perspective divide making objects smaller in the distance). To build
+	// a perpsective transform, we need the field of view (1/4 pi is common),
+	// the aspect ratio, and the near and far clipping planes (which define at
+	// what distances geometry should be no longer be rendered).
+	D3DXMATRIXA16 matProj;
+	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, 1.0f, 1.0f, 100.0f);
+	g_pDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+}
+
+LPDIRECT3DDEVICE9 Graphics::getDevice()
+{
+	return g_pDevice;
 }
 
 int Graphics::LoadBitmapToSurface(Sprite* spr, LPDIRECT3DSURFACE9* ppSurface, LPDIRECT3DDEVICE9 pDevice) {

@@ -49,6 +49,12 @@ Entity::Entity(int x, int y, int z, Model* model, int initHealth)
 
 Entity::~Entity()
 {
+	if (IsDrawable2D()) {
+		delete mSprite;
+	}
+	if (IsDrawable3D()) {
+		delete mModel;
+	}
 }
 
 bool Entity::IsAlive() const
@@ -117,6 +123,11 @@ bool Entity::IsDrawable3D() const
 Sprite* Entity::GetSprite() const
 {
 	return mSprite;
+}
+
+Model* Entity::GetModel() const
+{
+	return mModel;
 }
 
 void Entity::MoveTo(int x, int y, int z)

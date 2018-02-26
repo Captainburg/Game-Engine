@@ -32,6 +32,20 @@ public:
 	* @return null
 	*/
 	void Render(std::vector<Entity*> entities);
+	/** SetupMatrices
+	*
+	* Sets up the Worlds Matrices.
+	*
+	* @return null
+	*/
+	void SetupMatrices();
+	/** getDevice
+	*
+	* Gets the device context.
+	*
+	* @return the device context.
+	*/
+	LPDIRECT3DDEVICE9 getDevice();
 
 private:
 	/** Initialize DirectX9 3D Device
