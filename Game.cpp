@@ -14,9 +14,11 @@ void Game::GameInit(HWND hwnd)
 	gfx.GraphicsInit(hwnd);
 
 	//Initialize Entities
-	Sprite* testSprite = new Sprite(IMAGE_DISPLAYED);
-	testSprite->ResizeSprite(RESOLUTION_X, RESOLUTION_Y);
-	CreateInstance(new Entity(0, 0, 0, testSprite, 0));
+	Model* tigerModel = new Model("tiger2.x", gfx.getDevice());
+	CreateInstance(new Tiger(0, 0, 0, tigerModel, 0));
+
+	Model* planeModel = new Model("airplane2.x", gfx.getDevice());
+	CreateInstance(new Plane(0, 0, -25, planeModel, 0));
 }
 
 void Game::GameLoop()
@@ -32,17 +34,25 @@ void Game::GameLoop()
 		(*it)->BehaviorLoop();
 	}
 
+	//Move Camera
+	gfx.Camera_Behavior();
+
+	//Move Lights
+	gfx.Lights_Behavior();
+
 	//Draw the Screen
 	gfx.Render(entities);
 }
 
 void Game::GameShutdown()
 {
+	//Destroy Entities
+	for (auto it = entities.begin(); it != entities.end(); ++it) {
+		delete (*it);
+	}
+
 	//Shutdown Graphics
 	gfx.GraphicsShutdown();
-
-	//Destroy Entities
-	//DestroyInstance(...);
 }
 
 void Game::CreateInstance(Entity* entity)

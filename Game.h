@@ -35,6 +35,10 @@ public:
 	*
 	* @param entity A pointer to a new entity.
 	* @return null
+	*
+	**Entity Creation Example:**
+	Sprite* testSprite = new Sprite(IMAGE_NAME);
+	CreateInstance(new Entity(0, 0, 0, testSprite, 0));
 	*/
 	inline void CreateInstance(Entity* entity);
 	//void DestroyInstance(...);

@@ -1,10 +1,20 @@
 #pragma once
 #include "Sprite.h"
+#include "Model.h"
 
 class Entity {
 public:
-	Entity(int x, int y, int z, Sprite* sprite, int initHealth);
+	Entity(double x, double y, double z, Sprite* sprite, int initHealth);
+	Entity(double x, double y, double z, Model * model, int initHealth);
 	virtual ~Entity();
+
+	/** SetupMatrices
+	*
+	* Sets up the Worlds Matrices.
+	*
+	* @return null
+	*/
+	void SetupMatrices(LPDIRECT3DDEVICE9 g_pDevice, double cam_x, double cam_y, double cam_z, double cam_spin, double cam_angle);
 
 
 	/** Is Entity Alive
@@ -53,7 +63,14 @@ public:
 	*
 	* @return bool Whether this entity can be drawn.
 	*/
-	bool IsDrawable() const;
+	bool IsDrawable2D() const;
+	/** Is Drawable
+	*
+	* Returns whether this entity can be drawn.
+	*
+	* @return bool Whether this entity can be drawn.
+	*/
+	bool IsDrawable3D() const;
 	/** Get Sprite
 	*
 	* Returns this Entities Sprite pointer.
@@ -61,6 +78,13 @@ public:
 	* @return Sprite* this Entities Sprite pointer.
 	*/
 	Sprite* GetSprite() const;
+	/** Get Model
+	*
+	* Returns this Entities Model pointer.
+	*
+	* @return Model* this Entities Model pointer.
+	*/
+	Model* GetModel() const;
 
 	/** Move To (x, y, z)
 	*
@@ -71,16 +95,7 @@ public:
 	* @param z The number that mZ will be set to.
 	* @return null
 	*/
-	void MoveTo(int x, int y, int z);
-	/** Move To (x, y)
-	*
-	* Moves this Entity.
-	*
-	* @param x The number that mX will be set to.
-	* @param y The number that mY will be set to.
-	* @return null
-	*/
-	void MoveTo(int x, int y);
+	void MoveTo(double x, double y, double z);
 
 	/** Get X
 	*
@@ -88,21 +103,21 @@ public:
 	*
 	* @return int the value of the X co-ordinate
 	*/
-	int GetX();
+	double GetX();
 	/** Get Y
 	*
 	* Returns the value of the Y co-ordinate.
 	*
 	* @return int the value of the Y co-ordinate
 	*/
-	int GetY();
+	double GetY();
 	/** Get Z
 	*
 	* Returns the value of the Z co-ordinate.
 	*
 	* @return int the value of the Z co-ordinate
 	*/
-	int GetZ();
+	double GetZ();
 
 	/** Behavior Loop
 	*
@@ -112,16 +127,21 @@ public:
 	*/
 	virtual int BehaviorLoop();
 
-private:
+protected:
 	bool bAlive;
 	int mMaxHealth;
 	int mHealth;
 
 	bool bDrawable;
 	Sprite* mSprite;
+	Model* mModel;
 
 	bool b3D;
-	int mX;
-	int mY;
-	int mZ;
+	double mX;
+	double mY;
+	double mZ;
+
+	double mPitch;
+	double mYaw;
+	double mRoll;
 };

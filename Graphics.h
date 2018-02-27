@@ -1,6 +1,6 @@
 #pragma once
 #include "Font.h"
-#include "Entity.h"
+#include "GameClasses.h"
 #include <vector>
 #include "GameMacros.h"
 
@@ -8,6 +8,11 @@ class Graphics {
 public:
 	Graphics();
 	virtual ~Graphics();
+
+	void InitLights();
+
+	void Camera_Behavior();
+	void Lights_Behavior();
 
 	/** Graphics Initalization
 	*
@@ -32,6 +37,13 @@ public:
 	* @return null
 	*/
 	void Render(std::vector<Entity*> entities);
+	/** getDevice
+	*
+	* Gets the device context.
+	*
+	* @return the device context.
+	*/
+	LPDIRECT3DDEVICE9 getDevice();
 
 private:
 	/** Initialize DirectX9 3D Device
@@ -87,6 +99,15 @@ private:
 	LPDIRECT3DDEVICE9 g_pDevice;
 	HWND g_hWndMain;
 	Font* font;
+
+	//Camera Position
+	bool bSelected;
+	double cam_x;
+	double cam_y;
+	double cam_z;
+
+	double cam_spin;
+	double cam_angle;
 
 	//Benchmarking
 	int FPS;

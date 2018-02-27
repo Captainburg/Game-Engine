@@ -1,7 +1,7 @@
 #pragma once
 
-#define GAME_NAME "Game Assignment 1"
+#define GAME_NAME "Game Engine Assignment"
 #define RESOLUTION_X 1280
 #define RESOLUTION_Y 720
-#define IS_WINDOWED false
-#define IMAGE_DISPLAYED "zen.bmp"
+#define IS_WINDOWED true
+#define IMAGE_DISPLAYED "space.bmp"

@@ -1,0 +1,5 @@
+Lighting:
+0 - Ambient
+9 - Point
+8 - Directional
+7 - Spot
