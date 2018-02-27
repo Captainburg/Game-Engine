@@ -9,6 +9,8 @@ public:
 	Graphics();
 	virtual ~Graphics();
 
+	void InitLights();
+
 	void Camera_Behavior();
 	void Lights_Behavior();
 

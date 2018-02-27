@@ -14,7 +14,7 @@ void Game::GameInit(HWND hwnd)
 	gfx.GraphicsInit(hwnd);
 
 	//Initialize Entities
-	Model* tigerModel = new Model("Tiger.x", gfx.getDevice());
+	Model* tigerModel = new Model("tiger2.x", gfx.getDevice());
 	CreateInstance(new Tiger(0, 0, 0, tigerModel, 0));
 
 	Model* planeModel = new Model("airplane2.x", gfx.getDevice());

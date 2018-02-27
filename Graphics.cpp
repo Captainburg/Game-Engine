@@ -23,12 +23,91 @@ Graphics::~Graphics()
 {
 }
 
+// this is the function that sets up the lights and materials
+void Graphics::InitLights()
+{
+	D3DLIGHT9 light;    // create the light struct
 
-void Graphics::Lights_Behavior() {
+	//POINT
+	ZeroMemory(&light, sizeof(light));    // clear out the light struct for use
+	light.Type = D3DLIGHT_POINT;    // make the light type 'directional light'
+	light.Diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);    // set the light's color
+	light.Range = 30;
+	light.Position = D3DXVECTOR3(0, 2, -25);
 
+	g_pDevice->SetLight(0, &light);    // send the light struct properties to light #0
+	g_pDevice->LightEnable(0, FALSE);    // turn on light #0
+
+	//DIRECTIONAL
+	ZeroMemory(&light, sizeof(light));    // clear out the light struct for use
+	light.Type = D3DLIGHT_DIRECTIONAL;    // make the light type 'directional light'
+	light.Diffuse = D3DXCOLOR(1, 0, 0, 1);    // set the light's color
+	light.Direction = D3DXVECTOR3(1, 0, 0);
+
+	g_pDevice->SetLight(1, &light);    // send the light struct properties to light #0
+	g_pDevice->LightEnable(1, FALSE);    // turn on light #0
+
+	//SPOT
+	ZeroMemory(&light, sizeof(light));    // clear out the light struct for use
+	light.Type = D3DLIGHT_SPOT;    // make the light type 'directional light'
+	light.Diffuse = D3DXCOLOR(0, 0, 1, 1);    // set the light's color
+	light.Direction = D3DXVECTOR3(0, 0, -1);
+	light.Range = 30;
+	light.Position = D3DXVECTOR3(0, 0, 5);
+	light.Phi = D3DXToRadian(40);
+	light.Theta = D3DXToRadian(20);
+
+	g_pDevice->SetLight(2, &light);    // send the light struct properties to light #0
+	g_pDevice->LightEnable(2, FALSE);    // turn on light #0
 }
 
-void Graphics::Camera_Behavior() {
+
+void Graphics::Lights_Behavior()
+{
+	//Ambient ON
+	if (GetAsyncKeyState(0x30))
+	{
+		g_pDevice->SetRenderState(D3DRS_AMBIENT, 0xffffffff);
+	}
+	//Ambient OFF
+	if (GetAsyncKeyState(0x50))
+	{
+		g_pDevice->SetRenderState(D3DRS_AMBIENT, 0);
+	}
+	//Point ON
+	if (GetAsyncKeyState(0x39))
+	{
+		g_pDevice->LightEnable(0, TRUE);
+	}
+	//Point OFF
+	if (GetAsyncKeyState(0x4f))
+	{
+		g_pDevice->LightEnable(0, FALSE);
+	}
+	//Directional ON
+	if (GetAsyncKeyState(0x38))
+	{
+		g_pDevice->LightEnable(1, TRUE);
+	}
+	//Directional OFF
+	if (GetAsyncKeyState(0x49))
+	{
+		g_pDevice->LightEnable(1, FALSE);
+	}
+	//Spot ON
+	if (GetAsyncKeyState(0x37))
+	{
+		g_pDevice->LightEnable(2, TRUE);
+	}
+	//Spot OFF
+	if (GetAsyncKeyState(0x55))
+	{
+		g_pDevice->LightEnable(2, FALSE);
+	}
+}
+
+void Graphics::Camera_Behavior()
+{
 
 	//Select Camera
 	if (GetAsyncKeyState(0x33))
@@ -133,8 +212,11 @@ void Graphics::InitDirect3DDevice(HWND hWndTarget, int Width, int Height, BOOL b
 	// Turn on the zbuffer
 	(*ppDevice)->SetRenderState(D3DRS_ZENABLE, TRUE);
 
+	//Turn on Lighting
+	(*ppDevice)->SetRenderState(D3DRS_LIGHTING, TRUE);
+
 	// Turn on ambient lighting 
-	(*ppDevice)->SetRenderState(D3DRS_AMBIENT, 0xffffffff);
+	//(*ppDevice)->SetRenderState(D3DRS_AMBIENT, 0xffffffff);
 }
 
 void Graphics::GraphicsInit(HWND hwnd)
@@ -144,6 +226,7 @@ void Graphics::GraphicsInit(HWND hwnd)
 	InitDirect3DDevice(g_hWndMain, RESOLUTION_X, RESOLUTION_Y, IS_WINDOWED, D3DFMT_X8R8G8B8, g_pD3D, &g_pDevice);
 	font = new Font(g_pDevice);
 	font->LoadAlphabet("Alphabet vSmall.bmp", 8, 16);
+	InitLights();
 }
 
 void Graphics::GraphicsShutdown()
