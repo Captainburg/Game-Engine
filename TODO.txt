@@ -1,15 +1,5 @@
-<<<<<<<<<< >>>>>>>>>>
----***STAGE TWO***---
-<<<<<<<<<< >>>>>>>>>>
-
-Movement:
-Rotations/Translations on Mesh - Mouse
-Rotations/Translations on Camera - Keyboard
-
-Loading:
-Find another Mesh, Load in Both,
-Key 1 to Select Tiger, Key 2 to Select ???
-
 Lighting:
-Ambient/Point/Directional/Spot
-Can all be toggled on/off.
+0 - Ambient
+9 - Point
+8 - Directional
+7 - Spot

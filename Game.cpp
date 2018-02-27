@@ -14,12 +14,11 @@ void Game::GameInit(HWND hwnd)
 	gfx.GraphicsInit(hwnd);
 
 	//Initialize Entities
-	Sprite* baboonSprite = new Sprite(IMAGE_DISPLAYED);
-	baboonSprite->ResizeSprite(RESOLUTION_X, RESOLUTION_Y);
-	CreateInstance(new Entity(0, 0, 0, baboonSprite, 0));
+	Model* tigerModel = new Model("Tiger.x", gfx.getDevice());
+	CreateInstance(new Tiger(0, 0, 0, tigerModel, 0));
 
-	Model* tigerModel = new Model(MODEL_DISPLAYED, gfx.getDevice());
-	CreateInstance(new Entity(0, 0, 0, tigerModel, 0));
+	Model* planeModel = new Model("airplane2.x", gfx.getDevice());
+	CreateInstance(new Plane(0, 0, -25, planeModel, 0));
 }
 
 void Game::GameLoop()
@@ -34,6 +33,12 @@ void Game::GameLoop()
 	for (auto it = entities.begin(); it != entities.end(); ++it) {
 		(*it)->BehaviorLoop();
 	}
+
+	//Move Camera
+	gfx.Camera_Behavior();
+
+	//Move Lights
+	gfx.Lights_Behavior();
 
 	//Draw the Screen
 	gfx.Render(entities);

@@ -10,11 +10,95 @@ Graphics::Graphics()
 	, frameCount(0)
 	, lastFrame(GetTickCount())
 	, font(0)
+	, cam_x(0)
+	, cam_y(3)
+	, cam_z(5)
+	, cam_spin(0)
+	, cam_angle(0.7)
+	, bSelected(false)
 {
 }
 
 Graphics::~Graphics()
 {
+}
+
+
+void Graphics::Lights_Behavior() {
+
+}
+
+void Graphics::Camera_Behavior() {
+
+	//Select Camera
+	if (GetAsyncKeyState(0x33))
+	{
+		bSelected = true;
+	}
+	//Deselect Camera
+	if (GetAsyncKeyState(0x32) || GetAsyncKeyState(0x31))
+	{
+		bSelected = false;
+	}
+
+	if (bSelected) {
+		//W Forward
+		if (GetAsyncKeyState(0x57))
+		{
+			cam_z -= 0.05;
+		}
+		//A Left
+		if (GetAsyncKeyState(0x41))
+		{
+			cam_x += 0.05;
+		}
+		//D Right
+		if (GetAsyncKeyState(0x44))
+		{
+			cam_x -= 0.05;
+		}
+		//S Backward
+		if (GetAsyncKeyState(0x53))
+		{
+			cam_z += 0.05;
+		}
+		//Shift Downward
+		if (GetAsyncKeyState(VK_SHIFT))
+		{
+			cam_y -= 0.05;
+		}
+		//Space Upward
+		if (GetAsyncKeyState(VK_SPACE))
+		{
+			cam_y += 0.05;
+		}
+		//CCW - Spin Left
+		if (GetAsyncKeyState(VK_NUMPAD4))
+		{
+			cam_spin += 0.005;
+		}
+		//CW - Spin Right
+		if (GetAsyncKeyState(VK_NUMPAD6))
+		{
+			cam_spin -= 0.005;
+		}
+		//Angle Up
+		if (GetAsyncKeyState(VK_NUMPAD8))
+		{
+			cam_angle -= 0.005;
+		}
+		//Angle Down
+		if (GetAsyncKeyState(VK_NUMPAD2))
+		{
+			cam_angle += 0.005;
+		}
+	}
+	if (cam_angle < 0.001) {
+		cam_angle = 0.001;
+	}
+	if (cam_angle > 0.999) {
+		cam_angle = 0.999;
+	}
 }
 
 void Graphics::InitDirect3DDevice(HWND hWndTarget, int Width, int Height, BOOL bWindowed, D3DFORMAT FullScreenFormat, LPDIRECT3D9 pD3D, LPDIRECT3DDEVICE9* ppDevice) {
@@ -47,10 +131,10 @@ void Graphics::InitDirect3DDevice(HWND hWndTarget, int Width, int Height, BOOL b
 	pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWndTarget, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, ppDevice);
 
 	// Turn on the zbuffer
-	(*ppDevice)->SetRenderState(D3DRS_ZENABLE, TRUE); // NEW
+	(*ppDevice)->SetRenderState(D3DRS_ZENABLE, TRUE);
 
 	// Turn on ambient lighting 
-	(*ppDevice)->SetRenderState(D3DRS_AMBIENT, 0xffffffff); // NEW
+	(*ppDevice)->SetRenderState(D3DRS_AMBIENT, 0xffffffff);
 }
 
 void Graphics::GraphicsInit(HWND hwnd)
@@ -131,7 +215,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 		if ((*it)->IsDrawable3D())
 		{
 			// Setup the world, view, and projection matrices
-			SetupMatrices();
+			(*it)->SetupMatrices(g_pDevice, cam_x, cam_y, cam_z, cam_spin, cam_angle);
 
 			// Meshes are divided into subsets, one for each material. Render them in a loop
 			for (DWORD i = 0; i < (*it)->GetModel()->NumMaterials(); i++)
@@ -180,35 +264,6 @@ void Graphics::Render(std::vector<Entity*> entities)
 		lastFrame = GetTickCount();
 	}
 	frameCount++;
-}
-
-void Graphics::SetupMatrices() {
-
-	// For our world matrix, we will just leave it as the identity
-	D3DXMATRIXA16 matWorld;
-	D3DXMatrixRotationY(&matWorld, timeGetTime() / 1000.0f); //This Rotates the Tiger
-	g_pDevice->SetTransform(D3DTS_WORLD, &matWorld);
-
-	// Set up our view matrix. A view matrix can be defined given an eye point,
-	// a point to lookat, and a direction for which way is up. Here, we set the
-	// eye five units back along the z-axis and up three units, look at the 
-	// origin, and define "up" to be in the y-direction.
-	D3DXVECTOR3 vEyePt(0.0f, 3.0f, -5.0f);
-	D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
-	D3DXMATRIXA16 matView;
-	D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
-	g_pDevice->SetTransform(D3DTS_VIEW, &matView);
-
-	// For the projection matrix, we set up a perspective transform (which
-	// transforms geometry from 3D view space to 2D viewport space, with
-	// a perspective divide making objects smaller in the distance). To build
-	// a perpsective transform, we need the field of view (1/4 pi is common),
-	// the aspect ratio, and the near and far clipping planes (which define at
-	// what distances geometry should be no longer be rendered).
-	D3DXMATRIXA16 matProj;
-	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, 1.0f, 1.0f, 100.0f);
-	g_pDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
 LPDIRECT3DDEVICE9 Graphics::getDevice()
