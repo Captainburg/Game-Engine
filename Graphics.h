@@ -45,6 +45,8 @@ public:
 	*/
 	LPDIRECT3DDEVICE9 getDevice();
 
+	int getFPS();
+
 private:
 	/** Initialize DirectX9 3D Device
 	*

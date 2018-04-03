@@ -354,6 +354,11 @@ LPDIRECT3DDEVICE9 Graphics::getDevice()
 	return g_pDevice;
 }
 
+int Graphics::getFPS()
+{
+	return FPS;
+}
+
 int Graphics::LoadBitmapToSurface(Sprite* spr, LPDIRECT3DSURFACE9* ppSurface, LPDIRECT3DDEVICE9 pDevice) {
 
 
