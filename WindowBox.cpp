@@ -48,11 +48,12 @@ WPARAM WindowBox::RunLoop()
 			{
 				break;
 			}
-			else
+			if (msg.message == WM_LBUTTONDOWN)
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				game.GetRay(LOWORD(msg.lParam), HIWORD(msg.lParam));
 			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 		else
 		{

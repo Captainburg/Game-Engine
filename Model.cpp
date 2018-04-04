@@ -32,6 +32,22 @@ Model::Model(char filename[], LPDIRECT3DDEVICE9 g_pDevice)
 			D3DXCreateTextureFromFile(g_pDevice, d3dxMaterials[i].pTextureFilename, &g_pMeshTextures[i]);
 		}
 	}
+	//
+	// Compute the bounding sphere.
+	//
+	BYTE* v = 0;
+	g_pMesh->LockVertexBuffer(0, (void**)&v);
+
+	D3DXComputeBoundingSphere(
+		(D3DXVECTOR3*)v,
+		g_pMesh->GetNumVertices(),
+		D3DXGetFVFVertexSize(g_pMesh->GetFVF()),
+		&BSphere._center,
+		&BSphere._radius);
+
+	g_pMesh->UnlockVertexBuffer();
+
+	D3DXCreateSphere(g_pDevice, BSphere._radius, 20, 20, &Sphere, 0);
 
 	// Done with the material buffer
 	pD3DXMtrlBuffer->Release();
@@ -55,6 +71,7 @@ Model::~Model()
 	}
 	if (g_pMesh != NULL)
 	{
+		Sphere->Release();
 		g_pMesh->Release();
 	}
 }
@@ -67,6 +84,16 @@ char * Model::GetFileName()
 LPD3DXMESH Model::GetMesh()
 {
 	return g_pMesh;
+}
+
+LPD3DXMESH Model::GetSphere()
+{
+	return Sphere;
+}
+
+BoundingSphere* Model::GetBSphere()
+{
+	return &BSphere;
 }
 
 D3DMATERIAL9 * Model::GetMaterial()

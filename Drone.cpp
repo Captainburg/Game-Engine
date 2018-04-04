@@ -1,24 +1,24 @@
-#include "Plane.h"
+#include "Drone.h"
 
-Plane::Plane(double x, double y, double z, Sprite * sprite, int initHealth)
+Drone::Drone(double x, double y, double z, Sprite * sprite, int initHealth)
 	: Entity(x, y, z, sprite, initHealth)
-	, bSelected(false)
+	, bSelected(true)
 {
-	mYaw = D3DX_PI * -0.8;
+	mYaw = D3DX_PI * 0.2;
 }
 
-Plane::Plane(double x, double y, double z, Model * model, int initHealth)
+Drone::Drone(double x, double y, double z, Model * model, int initHealth)
 	: Entity(x, y, z, model, initHealth)
-	, bSelected(false)
+	, bSelected(true)
 {
-	mYaw = D3DX_PI * -0.8;
+	mYaw = D3DX_PI * 0.2;
 }
 
-Plane::~Plane()
+Drone::~Drone()
 {
 }
 
-int Plane::BehaviorLoop()
+int Drone::BehaviorLoop()
 {
 	//W Forward
 	if (GetAsyncKeyState(0x57))

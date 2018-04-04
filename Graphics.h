@@ -9,6 +9,8 @@ public:
 	Graphics();
 	virtual ~Graphics();
 
+	float DistanceToCamera(float x, float y, float z);
+
 	void InitLights();
 
 	void Camera_Behavior();
@@ -44,6 +46,14 @@ public:
 	* @return the device context.
 	*/
 	LPDIRECT3DDEVICE9 getDevice();
+
+	bool GetRay(int x, int y, BoundingSphere BSphere);
+
+	Ray CalcPickingRay(int x, int y);
+
+	void TransformRay(Ray * ray, D3DXMATRIX * T);
+
+	bool RaySphereIntTest(Ray * ray, BoundingSphere * sphere);
 
 	int getFPS();
 

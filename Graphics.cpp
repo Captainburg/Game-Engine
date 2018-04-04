@@ -11,16 +11,25 @@ Graphics::Graphics()
 	, lastFrame(GetTickCount())
 	, font(0)
 	, cam_x(0)
-	, cam_y(3)
+	, cam_y(4)
 	, cam_z(5)
 	, cam_spin(0)
-	, cam_angle(0.7)
+	, cam_angle(0.64)
 	, bSelected(false)
 {
 }
 
 Graphics::~Graphics()
 {
+}
+
+float Graphics::DistanceToCamera(float x, float y, float z)
+{
+	float x_diff = x - cam_x;
+	float y_diff = y - cam_y;
+	float z_diff = z - cam_z;
+
+	return sqrt(sqrt(x_diff * x_diff + y_diff * y_diff) * sqrt(x_diff * x_diff + y_diff * y_diff) + z_diff * z_diff);
 }
 
 // this is the function that sets up the lights and materials
@@ -108,70 +117,57 @@ void Graphics::Lights_Behavior()
 
 void Graphics::Camera_Behavior()
 {
-
-	//Select Camera
-	if (GetAsyncKeyState(0x33))
+	//W Forward
+	if (GetAsyncKeyState(0x57))
 	{
-		bSelected = true;
+		cam_z -= 0.05;
 	}
-	//Deselect Camera
-	if (GetAsyncKeyState(0x32) || GetAsyncKeyState(0x31))
+	//A Left
+	if (GetAsyncKeyState(0x41))
 	{
-		bSelected = false;
+		cam_x += 0.05;
+	}
+	//D Right
+	if (GetAsyncKeyState(0x44))
+	{
+		cam_x -= 0.05;
+	}
+	//S Backward
+	if (GetAsyncKeyState(0x53))
+	{
+		cam_z += 0.05;
+	}
+	//Shift Downward
+	if (GetAsyncKeyState(VK_SHIFT))
+	{
+		cam_y -= 0.05;
+	}
+	//Space Upward
+	if (GetAsyncKeyState(VK_SPACE))
+	{
+		cam_y += 0.05;
+	}
+	//CCW - Spin Left
+	if (GetAsyncKeyState(VK_NUMPAD4))
+	{
+		cam_spin += 0.005;
+	}
+	//CW - Spin Right
+	if (GetAsyncKeyState(VK_NUMPAD6))
+	{
+		cam_spin -= 0.005;
+	}
+	//Angle Up
+	if (GetAsyncKeyState(VK_NUMPAD8))
+	{
+		cam_angle -= 0.005;
+	}
+	//Angle Down
+	if (GetAsyncKeyState(VK_NUMPAD2))
+	{
+		cam_angle += 0.005;
 	}
 
-	if (bSelected) {
-		//W Forward
-		if (GetAsyncKeyState(0x57))
-		{
-			cam_z -= 0.05;
-		}
-		//A Left
-		if (GetAsyncKeyState(0x41))
-		{
-			cam_x += 0.05;
-		}
-		//D Right
-		if (GetAsyncKeyState(0x44))
-		{
-			cam_x -= 0.05;
-		}
-		//S Backward
-		if (GetAsyncKeyState(0x53))
-		{
-			cam_z += 0.05;
-		}
-		//Shift Downward
-		if (GetAsyncKeyState(VK_SHIFT))
-		{
-			cam_y -= 0.05;
-		}
-		//Space Upward
-		if (GetAsyncKeyState(VK_SPACE))
-		{
-			cam_y += 0.05;
-		}
-		//CCW - Spin Left
-		if (GetAsyncKeyState(VK_NUMPAD4))
-		{
-			cam_spin += 0.005;
-		}
-		//CW - Spin Right
-		if (GetAsyncKeyState(VK_NUMPAD6))
-		{
-			cam_spin -= 0.005;
-		}
-		//Angle Up
-		if (GetAsyncKeyState(VK_NUMPAD8))
-		{
-			cam_angle -= 0.005;
-		}
-		//Angle Down
-		if (GetAsyncKeyState(VK_NUMPAD2))
-		{
-			cam_angle += 0.005;
-		}
-	}
 	if (cam_angle < 0.001) {
 		cam_angle = 0.001;
 	}
@@ -181,7 +177,7 @@ void Graphics::Camera_Behavior()
 }
 
 void Graphics::InitDirect3DDevice(HWND hWndTarget, int Width, int Height, BOOL bWindowed, D3DFORMAT FullScreenFormat, LPDIRECT3D9 pD3D, LPDIRECT3DDEVICE9* ppDevice) {
-	
+
 	D3DPRESENT_PARAMETERS d3dpp;
 	D3DDISPLAYMODE d3ddm;
 
@@ -266,7 +262,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 	//Declare Surface Pointer
 	LPDIRECT3DSURFACE9 pSurface = 0;
 
-					//---DRAW BITMAP BLOCK---//
+	//---DRAW BITMAP BLOCK---//
 
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
 		if ((*it)->IsDrawable2D())
@@ -279,10 +275,10 @@ void Graphics::Render(std::vector<Entity*> entities)
 			pSurface->GetDesc(&d3dsd);//get info about surface
 
 			//Select the Bitmap on the Surface
-			RECT rect = {0, 0, static_cast<long>(d3dsd.Width), static_cast<long>(d3dsd.Height)};
+			RECT rect = { 0, 0, static_cast<long>(d3dsd.Width), static_cast<long>(d3dsd.Height) };
 
 			//Select the Bitmap on the DestSurface
-			RECT rectDest = { (*it)->GetX(), (*it)->GetY(), (*it)->GetX() + static_cast<long>(d3dsd.Width), (*it)->GetY() + static_cast<long>(d3dsd.Height) };
+			RECT rectDest = { static_cast<long>((*it)->GetX()), static_cast<long>((*it)->GetY()), static_cast<long>((*it)->GetX() + d3dsd.Width), static_cast<long>((*it)->GetY() + d3dsd.Height) };
 
 			//Copy it to the Back Surface
 			D3DXLoadSurfaceFromSurface(pBackSurf, NULL, &rectDest, pSurface, NULL, &rect, D3DX_FILTER_TRIANGLE, 0);
@@ -291,7 +287,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 			pSurface = 0;
 		}
 	}
-					//---DRAW MODEL BLOCK---//
+	//---DRAW MODEL BLOCK---//
 
 	g_pDevice->BeginScene();
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
@@ -309,15 +305,27 @@ void Graphics::Render(std::vector<Entity*> entities)
 
 				// Draw the mesh subset
 				(*it)->GetModel()->GetMesh()->DrawSubset(i);
+
+				// Render the bounding sphere with alpha blending so we can see through it.
+				/*g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+				g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+				D3DMATERIAL9 blue = BLUE_MTRL;
+				blue.Diffuse.a = 0.25f; // 25% opacity
+				g_pDevice->SetMaterial(&blue);
+				(*it)->GetModel()->GetSphere()->DrawSubset(0);
+
+				g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);*/
 			}
 
 		}
 	}
 	g_pDevice->EndScene();
 
-					//---DRAW TEXT BLOCK---//
-	
-	//Lock the back surface
+	//---DRAW TEXT BLOCK---//
+
+//Lock the back surface
 	pBackSurf->LockRect(&LockedRect, NULL, 0);
 
 	//Pointer to the locked bits
@@ -335,8 +343,8 @@ void Graphics::Render(std::vector<Entity*> entities)
 	//Clear Pointers
 	pBackSurf = 0;
 	pData = 0;
-	
-					//---SWAP BUFFERS---//
+
+	//---SWAP BUFFERS---//
 	g_pDevice->Present(NULL, NULL, NULL, NULL);
 
 	//Frame Count
@@ -354,6 +362,88 @@ LPDIRECT3DDEVICE9 Graphics::getDevice()
 	return g_pDevice;
 }
 
+bool Graphics::GetRay(int x, int y, BoundingSphere BSphere)
+{
+	Ray ray = CalcPickingRay(x, y);
+
+	// transform the ray to world space
+	D3DXMATRIX view;
+	g_pDevice->GetTransform(D3DTS_VIEW, &view);
+
+	D3DXMATRIX viewInverse;
+	D3DXMatrixInverse(&viewInverse, 0, &view);
+
+	TransformRay(&ray, &viewInverse);
+
+	// test for a hit
+	return RaySphereIntTest(&ray, &BSphere);
+}
+
+Ray Graphics::CalcPickingRay(int x, int y)
+{
+	float px = 0.0f;
+	float py = 0.0f;
+
+	D3DVIEWPORT9 vp;
+	g_pDevice->GetViewport(&vp);
+
+	D3DXMATRIX proj;
+	g_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
+
+	px = (((2.0f*x) / vp.Width) - 1.0f) / proj(0, 0);
+	py = (((-2.0f*y) / vp.Height) + 1.0f) / proj(1, 1);
+
+	Ray ray;
+	ray._origin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	ray._direction = D3DXVECTOR3(px, py, 1.0f);
+
+	return ray;
+}
+
+void Graphics::TransformRay(Ray* ray, D3DXMATRIX* T)
+{
+	// transform the ray's origin, w = 1.
+	D3DXVec3TransformCoord(
+		&ray->_origin,
+		&ray->_origin,
+		T);
+
+	// transform the ray's direction, w = 0.
+	D3DXVec3TransformNormal(
+		&ray->_direction,
+		&ray->_direction,
+		T);
+
+	// normalize the direction
+	D3DXVec3Normalize(&ray->_direction, &ray->_direction);
+}
+
+bool Graphics::RaySphereIntTest(Ray* ray, BoundingSphere* sphere)
+{
+	D3DXVECTOR3 v = ray->_origin - sphere->_center;
+
+	float b = 2.0f * D3DXVec3Dot(&ray->_direction, &v);
+	float c = D3DXVec3Dot(&v, &v) - (sphere->_radius * sphere->_radius);
+
+	// find the discriminant
+	float discriminant = (b * b) - (4.0f * c);
+
+	// test for imaginary number
+	if (discriminant < 0.0f)
+		return false;
+
+	discriminant = sqrtf(discriminant);
+
+	float s0 = (-b + discriminant) / 2.0f;
+	float s1 = (-b - discriminant) / 2.0f;
+
+	// if a solution is >= 0, then we intersected the sphere
+	if (s0 >= 0.0f || s1 >= 0.0f)
+		return true;
+
+	return false;
+}
+
 int Graphics::getFPS()
 {
 	return FPS;
@@ -368,7 +458,7 @@ int Graphics::LoadBitmapToSurface(Sprite* spr, LPDIRECT3DSURFACE9* ppSurface, LP
 		//create surface for bitmap
 		LPDIRECT3DSURFACE9 tempSurf;
 		pDevice->CreateOffscreenPlainSurface(spr->GetBitmap()->bmWidth, spr->GetBitmap()->bmHeight, D3DFMT_X8R8G8B8, D3DPOOL_SCRATCH, &tempSurf, NULL);
-		
+
 		//Load Bitmap to Surface
 		RECT rect = { 0, 0, spr->GetBitmap()->bmWidth, spr->GetBitmap()->bmHeight };
 		D3DXLoadSurfaceFromMemory(tempSurf, NULL, NULL, spr->GetBitmap()->bmBits, D3DFMT_R8G8B8, spr->GetBitmap()->bmWidthBytes, NULL, &rect, D3DX_FILTER_NONE, 0);
@@ -399,6 +489,6 @@ void Graphics::DrawImage(int x, int y, int Pitch, DWORD* pData, BITMAP* img)
 
 void Graphics::DrawPixel(int x, int y, int Pitch, DWORD* pData, DWORD color)
 {
-		//Y Value, Find Width, X Value
+	//Y Value, Find Width, X Value
 	pData[y * Pitch / 4 + x] = color;
 }

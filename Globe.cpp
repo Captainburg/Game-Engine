@@ -1,24 +1,24 @@
-#include "Plane.h"
+#include "Globe.h"
 
-Plane::Plane(double x, double y, double z, Sprite * sprite, int initHealth)
+Globe::Globe(double x, double y, double z, Sprite * sprite, int initHealth)
 	: Entity(x, y, z, sprite, initHealth)
-	, bSelected(false)
+	, bSelected(true)
 {
-	mYaw = D3DX_PI * -0.8;
+	mYaw = D3DX_PI * 0.5;
 }
 
-Plane::Plane(double x, double y, double z, Model * model, int initHealth)
+Globe::Globe(double x, double y, double z, Model * model, int initHealth)
 	: Entity(x, y, z, model, initHealth)
-	, bSelected(false)
+	, bSelected(true)
 {
-	mYaw = D3DX_PI * -0.8;
+	mYaw = D3DX_PI * 0.5;
 }
 
-Plane::~Plane()
+Globe::~Globe()
 {
 }
 
-int Plane::BehaviorLoop()
+int Globe::BehaviorLoop()
 {
 	//W Forward
 	if (GetAsyncKeyState(0x57))

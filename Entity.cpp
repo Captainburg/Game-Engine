@@ -45,6 +45,7 @@ Entity::Entity(double x, double y, double z, Model* model, int initHealth)
 	else {
 		bDrawable = true;
 		b3D = true;
+		GetModel()->GetBSphere()->_center = D3DXVECTOR3(GetX(), GetY(), GetZ());
 	}
 
 	//Logic Related

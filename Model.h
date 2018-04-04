@@ -1,5 +1,6 @@
 #pragma once
 #include <d3dx9.h>
+#include "d3dUtility.h"
 
 class Model {
 public:
@@ -20,6 +21,20 @@ public:
 	* @return LPD3DXMESH a mesh.
 	*/
 	LPD3DXMESH GetMesh();
+	/** Get Material
+	*
+	* Get a Material.
+	*
+	* @return D3DMATERIAL9* a Material pointer.
+	*/
+	LPD3DXMESH GetSphere();
+	/** Get Material
+	*
+	* Get a Material.
+	*
+	* @return D3DMATERIAL9* a Material pointer.
+	*/
+	BoundingSphere* GetBSphere();
 	/** Get Material
 	*
 	* Get a Material.
@@ -48,4 +63,6 @@ private:
 	D3DMATERIAL9* g_pMeshMaterials;
 	LPDIRECT3DTEXTURE9* g_pMeshTextures;
 	DWORD g_dwNumMaterials;
+	BoundingSphere BSphere;
+	LPD3DXMESH Sphere = 0;
 };
