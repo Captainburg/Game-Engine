@@ -16,6 +16,7 @@ Graphics::Graphics()
 	, cam_spin(0)
 	, cam_angle(0.64)
 	, bSelected(false)
+	, Sno(0)
 {
 }
 
@@ -223,6 +224,38 @@ void Graphics::GraphicsInit(HWND hwnd)
 	font = new Font(g_pDevice);
 	font->LoadAlphabet("Alphabet vSmall.bmp", 8, 16);
 	InitLights();
+	InitParticles();
+}
+
+
+bool Graphics::InitParticles()
+{
+	// seed random number generator
+	srand((unsigned int)time(0));
+
+	//
+	// Create Snow System.
+	//
+
+	BoundingBox* boundingBox = new BoundingBox;
+	boundingBox->_min = D3DXVECTOR3(-40.0f, -40.0f, -40.0f);
+	boundingBox->_max = D3DXVECTOR3(40.0f, 40.0f, 40.0f);
+	Sno = new Snow(boundingBox, 5000);
+	Sno->init(g_pDevice, "snowflake.dds");
+
+	//
+	// Set projection matrix.
+	//
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(
+		&proj,
+		D3DX_PI / 4.0f, // 45 - degree
+		(float)RESOLUTION_X / (float)RESOLUTION_Y,
+		1.0f,
+		5000.0f);
+	g_pDevice->SetTransform(D3DTS_PROJECTION, &proj);
+
+	return true;
 }
 
 void Graphics::GraphicsShutdown()
@@ -241,6 +274,7 @@ void Graphics::GraphicsShutdown()
 	{
 		font->UnloadAlphabet();
 	}
+	Delete<PSystem*>(Sno);
 }
 
 void Graphics::Render(std::vector<Entity*> entities)
@@ -248,6 +282,8 @@ void Graphics::Render(std::vector<Entity*> entities)
 	//Declare LockedRect and the Back Surface
 	D3DLOCKED_RECT LockedRect;
 	LPDIRECT3DSURFACE9 pBackSurf = 0;
+
+	Sno->update(1.0f / FPS);
 
 	//FPS Translate to String
 	std::string s = std::to_string(FPS);
@@ -321,11 +357,16 @@ void Graphics::Render(std::vector<Entity*> entities)
 
 		}
 	}
+	D3DXMATRIXA16 snowWorld;
+	D3DXMatrixTranslation(&snowWorld, 0, 0, 0);
+	g_pDevice->SetTransform(D3DTS_WORLD, &snowWorld);
+	Sno->render();
+
 	g_pDevice->EndScene();
 
 	//---DRAW TEXT BLOCK---//
 
-//Lock the back surface
+	//Lock the back surface
 	pBackSurf->LockRect(&LockedRect, NULL, 0);
 
 	//Pointer to the locked bits

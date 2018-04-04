@@ -3,6 +3,9 @@
 #include "GameClasses.h"
 #include <vector>
 #include "GameMacros.h"
+#include "psystem.h"
+#include <cstdlib>
+#include <ctime>
 
 class Graphics {
 public:
@@ -24,6 +27,7 @@ public:
 	* @return null
 	*/
 	void GraphicsInit(HWND hwnd);
+	bool InitParticles();
 	/** Graphics Initalization
 	*
 	* Shuts down the DirectX9 Graphics.
@@ -125,4 +129,5 @@ private:
 	int FPS;
 	int frameCount;
 	DWORD lastFrame;
+	PSystem* Sno;
 };

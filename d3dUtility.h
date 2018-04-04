@@ -98,26 +98,8 @@ struct Ray
 	D3DXVECTOR3 _direction;
 };
 
-//
-// Constants
-//
-
 //const float INFINITY = FLT_MAX;
 const float EPSILON = 0.001f;
-
-//
-// Drawing
-//
-
-// Function references "desert.bmp" internally.  This file must
-// be in the working directory.
-bool DrawBasicScene(
-	IDirect3DDevice9* device,// Pass in 0 for cleanup.
-	float scale);            // uniform scale 
-
-							 //
-							 // Vertex Structures
-							 //
 
 struct Vertex
 {
@@ -136,5 +118,18 @@ struct Vertex
 
 	static const DWORD FVF;
 };
+
+float GetRandomFloat(float lowBound, float highBound);
+
+// Desc: Returns a random vector in the bounds specified by min and max.
+void GetRandomVector(
+	D3DXVECTOR3* out,
+	D3DXVECTOR3* min,
+	D3DXVECTOR3* max);
+
+//
+// Conversion
+//
+DWORD FtoDw(float f);
 
 #endif // __d3dUtilityH__

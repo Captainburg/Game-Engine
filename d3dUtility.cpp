@@ -15,33 +15,6 @@
 // vertex formats
 const DWORD Vertex::FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1;
 
-int EnterMsgLoop(bool(*ptr_display)(float timeDelta))
-{
-	MSG msg;
-	::ZeroMemory(&msg, sizeof(MSG));
-
-	static float lastTime = (float)timeGetTime();
-
-	while (msg.message != WM_QUIT)
-	{
-		if (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
-		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
-		}
-		else
-		{
-			float currTime = (float)timeGetTime();
-			float timeDelta = (currTime - lastTime)*0.001f;
-
-			ptr_display(timeDelta);
-
-			lastTime = currTime;
-		}
-	}
-	return msg.wParam;
-}
-
 D3DLIGHT9 InitDirectionalLight(D3DXVECTOR3* direction, D3DXCOLOR* color)
 {
 	D3DLIGHT9 light;
@@ -138,109 +111,29 @@ BoundingSphere::BoundingSphere()
 	_radius = 0.0f;
 }
 
-bool DrawBasicScene(IDirect3DDevice9* device, float scale)
+float GetRandomFloat(float lowBound, float highBound)
 {
-	static IDirect3DVertexBuffer9* floor = 0;
-	static IDirect3DTexture9*      tex = 0;
-	static ID3DXMesh*              pillar = 0;
+	if (lowBound >= highBound) // bad input
+		return lowBound;
 
-	HRESULT hr = 0;
+	// get random float in [0, 1] interval
+	float f = (rand() % 10000) * 0.0001f;
 
-	if (device == 0)
-	{
-		if (floor && tex && pillar)
-		{
-			// they already exist, destroy them
-			Release<IDirect3DVertexBuffer9*>(floor);
-			Release<IDirect3DTexture9*>(tex);
-			Release<ID3DXMesh*>(pillar);
-		}
-	}
-	else if (!floor && !tex && !pillar)
-	{
-		// they don't exist, create them
-		device->CreateVertexBuffer(
-			6 * sizeof(Vertex),
-			0,
-			Vertex::FVF,
-			D3DPOOL_MANAGED,
-			&floor,
-			0);
+	// return float in [lowBound, highBound] interval. 
+	return (f * (highBound - lowBound)) + lowBound;
+}
 
-		Vertex* v = 0;
-		floor->Lock(0, 0, (void**)&v, 0);
+void GetRandomVector(
+	D3DXVECTOR3* out,
+	D3DXVECTOR3* min,
+	D3DXVECTOR3* max)
+{
+	out->x = GetRandomFloat(min->x, max->x);
+	out->y = GetRandomFloat(min->y, max->y);
+	out->z = GetRandomFloat(min->z, max->z);
+}
 
-		v[0] = Vertex(-20.0f, -2.5f, -20.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-		v[1] = Vertex(-20.0f, -2.5f, 20.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-		v[2] = Vertex(20.0f, -2.5f, 20.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-
-		v[3] = Vertex(-20.0f, -2.5f, -20.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-		v[4] = Vertex(20.0f, -2.5f, 20.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-		v[5] = Vertex(20.0f, -2.5f, -20.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f);
-
-		floor->Unlock();
-
-		D3DXCreateCylinder(device, 0.5f, 0.5f, 5.0f, 20, 20, &pillar, 0);
-
-		D3DXCreateTextureFromFile(
-			device,
-			"desert.bmp",
-			&tex);
-	}
-	else
-	{
-		//
-		// Pre-Render Setup
-		//
-		device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-		device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-		device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-
-		D3DXVECTOR3 dir(0.707f, -0.707f, 0.707f);
-		D3DXCOLOR col(1.0f, 1.0f, 1.0f, 1.0f);
-		D3DLIGHT9 light = InitDirectionalLight(&dir, &col);
-
-		device->SetLight(0, &light);
-		device->LightEnable(0, true);
-		device->SetRenderState(D3DRS_NORMALIZENORMALS, true);
-		device->SetRenderState(D3DRS_SPECULARENABLE, true);
-
-		//
-		// Render
-		//
-
-		D3DXMATRIX T, R, P, S;
-
-		D3DXMatrixScaling(&S, scale, scale, scale);
-
-		// used to rotate cylinders to be parallel with world's y-axis
-		D3DXMatrixRotationX(&R, -D3DX_PI * 0.5f);
-
-		// draw floor
-		D3DXMatrixIdentity(&T);
-		T = T * S;
-		device->SetTransform(D3DTS_WORLD, &T);
-		device->SetMaterial(&WHITE_MTRL);
-		device->SetTexture(0, tex);
-		device->SetStreamSource(0, floor, 0, sizeof(Vertex));
-		device->SetFVF(Vertex::FVF);
-		device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-
-		// draw pillars
-		device->SetMaterial(&BLUE_MTRL);
-		device->SetTexture(0, 0);
-		for (int i = 0; i < 5; i++)
-		{
-			D3DXMatrixTranslation(&T, -5.0f, 0.0f, -15.0f + (i * 7.5f));
-			P = R * T * S;
-			device->SetTransform(D3DTS_WORLD, &P);
-			pillar->DrawSubset(0);
-
-			D3DXMatrixTranslation(&T, 5.0f, 0.0f, -15.0f + (i * 7.5f));
-			P = R * T * S;
-			device->SetTransform(D3DTS_WORLD, &P);
-			pillar->DrawSubset(0);
-		}
-	}
-	return true;
+DWORD FtoDw(float f)
+{
+	return *((DWORD*)&f);
 }
