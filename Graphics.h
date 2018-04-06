@@ -37,6 +37,9 @@ public:
 	* @return null
 	*/
 	void GraphicsShutdown();
+	void Render(std::vector<Entity*> entities, std::vector<Mirror*> mirrors);
+	void RenderMirror(Mirror * m, std::vector<Entity*> entities, float camV_x, float camV_y, float camV_z, int stencilNumber);
+	void RenderReflection(Mirror * m, std::vector<Entity*> entities, float camV_x, float camV_y, float camV_z, int stencilNumber);
 	/** Render
 	*
 	* Completes all rendering during the GameLoop().
@@ -44,7 +47,6 @@ public:
 	* @param entities The entities to be drawn on screen.
 	* @return null
 	*/
-	void Render(std::vector<Entity*> entities);
 	void DrawCube();
 	/** getDevice
 	*
@@ -52,7 +54,6 @@ public:
 	*
 	* @return the device context.
 	*/
-	void RenderMirror(Mirror * m, float camV_x, float camV_y, float camV_z);
 
 	LPDIRECT3DDEVICE9 getDevice();
 

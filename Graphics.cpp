@@ -74,7 +74,6 @@ void Graphics::InitLights()
 	g_pDevice->LightEnable(2, FALSE);    // turn on light #0
 }
 
-
 void Graphics::Lights_Behavior()
 {
 	//Ambient ON
@@ -121,35 +120,42 @@ void Graphics::Lights_Behavior()
 
 void Graphics::Camera_Behavior()
 {
+	double yWeakness = 1 - pow(fabs(cam_angle - 0.5) * 2, 2);
+	D3DXVECTOR3 vDir((FLOAT)sin(cam_spin * D3DX_PI * 2) * yWeakness, (FLOAT)cos(cam_angle * D3DX_PI), (FLOAT)sin((cam_spin - 0.25) * D3DX_PI * 2) * yWeakness);
+	
+	float x_diff = 0;
+	float y_diff = 0;
+	float z_diff = 0;
+
 	//W Forward
 	if (GetAsyncKeyState(0x57))
 	{
-		cam_z -= 0.05;
+		z_diff -= 0.05;
 	}
 	//A Left
 	if (GetAsyncKeyState(0x41))
 	{
-		cam_x += 0.05;
+		x_diff += 0.05;
 	}
 	//D Right
 	if (GetAsyncKeyState(0x44))
 	{
-		cam_x -= 0.05;
+		x_diff -= 0.05;
 	}
 	//S Backward
 	if (GetAsyncKeyState(0x53))
 	{
-		cam_z += 0.05;
+		z_diff += 0.05;
 	}
 	//Shift Downward
 	if (GetAsyncKeyState(VK_SHIFT))
 	{
-		cam_y -= 0.05;
+		y_diff -= 0.05;
 	}
 	//Space Upward
 	if (GetAsyncKeyState(VK_SPACE))
 	{
-		cam_y += 0.05;
+		y_diff += 0.05;
 	}
 	//CCW - Spin Left
 	if (GetAsyncKeyState(VK_NUMPAD4))
@@ -171,6 +177,10 @@ void Graphics::Camera_Behavior()
 	{
 		cam_angle += 0.005;
 	}
+
+	cam_x += -z_diff * vDir.x + -x_diff * vDir.z;
+	cam_y += -z_diff * vDir.y + y_diff;
+	cam_z += -z_diff * vDir.z + x_diff * vDir.x;
 
 	if (cam_angle < 0.001) {
 		cam_angle = 0.001;
@@ -195,19 +205,19 @@ void Graphics::InitDirect3DDevice(HWND hWndTarget, int Width, int Height, BOOL b
 
 	d3dpp.BackBufferWidth = Width;
 	d3dpp.BackBufferHeight = Height;
-	d3dpp.BackBufferFormat = bWindowed ? d3ddm.Format : FullScreenFormat;
+	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.hDeviceWindow = hWndTarget;
 	d3dpp.Windowed = bWindowed;
 	d3dpp.EnableAutoDepthStencil = TRUE;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.FullScreen_RefreshRateInHz = 0;//default refresh rate
 	d3dpp.PresentationInterval = bWindowed ? 0 : D3DPRESENT_INTERVAL_IMMEDIATE;
 	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 
-	pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWndTarget, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, ppDevice);
+	pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWndTarget, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, ppDevice);
 
 	// Turn on the zbuffer
 	(*ppDevice)->SetRenderState(D3DRS_ZENABLE, TRUE);
@@ -362,7 +372,7 @@ void Graphics::GraphicsShutdown()
 	Delete<PSystem*>(Sno);
 }
 
-void Graphics::Render(std::vector<Entity*> entities)
+void Graphics::Render(std::vector<Entity*> entities, std::vector<Mirror*> mirrors)
 {
 	//Declare LockedRect and the Back Surface
 	D3DLOCKED_RECT LockedRect;
@@ -433,8 +443,22 @@ void Graphics::Render(std::vector<Entity*> entities)
 	//Draw Mirror Cube
 	DrawCube();
 
+	//Calculate Cam Vector
+	double yWeakness = 1 - pow(fabs(cam_angle - 0.5) * 2, 2);
+	D3DXVECTOR3 vLookatPt((FLOAT)sin(cam_spin * D3DX_PI * 2) * yWeakness, (FLOAT)cos(cam_angle * D3DX_PI), (FLOAT)sin((cam_spin - 0.25) * D3DX_PI * 2) * yWeakness);
+
+
+	g_pDevice->Clear(0, 0, D3DCLEAR_STENCIL, 0xff000000, 1.0f, 0L);
+	int i = 1;
+	//Draw Mirrors to Stencil Buffer
+	for (std::vector<Mirror*>::iterator it = mirrors.begin(); it != mirrors.end(); ++it) {
+		RenderMirror((*it), entities, vLookatPt.x, vLookatPt.y, vLookatPt.z, i++);
+	}
+	i = 1;
 	//Draw Reflections
-	//CONTINUE HERE
+	for (std::vector<Mirror*>::iterator it = mirrors.begin(); it != mirrors.end(); ++it) {
+		RenderReflection((*it), entities, vLookatPt.x, vLookatPt.y, vLookatPt.z, i++);
+	}
 
 	//---DRAW PARTICLES BLOCK---//
 	D3DXMATRIXA16 snowWorld;
@@ -477,7 +501,7 @@ void Graphics::Render(std::vector<Entity*> entities)
 	frameCount++;
 }
 
-void Graphics::RenderMirror(Mirror* m, float camV_x, float camV_y, float camV_z)
+void Graphics::RenderMirror(Mirror* m, std::vector<Entity*> entities, float camV_x, float camV_y, float camV_z, int stencilNumber)
 {
 	//
 	// Draw Mirror quad to stencil buffer ONLY.  In this way
@@ -485,11 +509,10 @@ void Graphics::RenderMirror(Mirror* m, float camV_x, float camV_y, float camV_z)
 	// be on.  Therefore, the reflected teapot can only be rendered
 	// where the stencil bits are turned on, and thus on the mirror 
 	// only.
-	//
 
 	g_pDevice->SetRenderState(D3DRS_STENCILENABLE, true);
 	g_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
-	g_pDevice->SetRenderState(D3DRS_STENCILREF, 0x1);
+	g_pDevice->SetRenderState(D3DRS_STENCILREF, stencilNumber);
 	g_pDevice->SetRenderState(D3DRS_STENCILMASK, 0xffffffff);
 	g_pDevice->SetRenderState(D3DRS_STENCILWRITEMASK, 0xffffffff);
 	g_pDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
@@ -510,11 +533,39 @@ void Graphics::RenderMirror(Mirror* m, float camV_x, float camV_y, float camV_z)
 	D3DXMATRIX I;
 	D3DXMatrixIdentity(&I);
 	g_pDevice->SetTransform(D3DTS_WORLD, &I);
-
 	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, m->rN(), 2);
 
 	// re-enable depth writes
 	g_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, true);
+
+	// Restore render states.
+	g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	g_pDevice->SetRenderState(D3DRS_STENCILENABLE, false);
+	g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+}
+
+void Graphics::RenderReflection(Mirror* m, std::vector<Entity*> entities, float camV_x, float camV_y, float camV_z, int stencilNumber)
+{
+	//
+	// Draw Mirror quad to stencil buffer ONLY.  In this way
+	// only the stencil bits that correspond to the mirror will
+	// be on.  Therefore, the reflected teapot can only be rendered
+	// where the stencil bits are turned on, and thus on the mirror 
+	// only.
+
+	g_pDevice->SetRenderState(D3DRS_STENCILENABLE, true);
+	g_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+	g_pDevice->SetRenderState(D3DRS_STENCILREF, stencilNumber);
+	g_pDevice->SetRenderState(D3DRS_STENCILMASK, 0xffffffff);
+	g_pDevice->SetRenderState(D3DRS_STENCILWRITEMASK, 0xffffffff);
+	g_pDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+	g_pDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+	g_pDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
+
+	// disable writes to the depth and back buffers
+	g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+	g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 	// only draw reflected teapot to the pixels where the mirror was drawn to.
 	g_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_EQUAL);
@@ -525,37 +576,51 @@ void Graphics::RenderMirror(Mirror* m, float camV_x, float camV_y, float camV_z)
 	D3DXPLANE plane(m->px(), m->py(), m->pz(), 0.0f); // xy plane
 	D3DXMatrixReflect(&R, &plane);
 
-	//MT is the Mirror Transition. That is: the distance the object is relative to the mirror. Tip->Tail, Obj->Mirror
-	float mtx = Sign(m->px()) == Sign(TeapotPosition.x - m->mx()) ? (TeapotPosition.x - m->mx()) * m->px() * Sign(TeapotPosition.x - m->mx()) : 0;
-	float mty = Sign(m->py()) == Sign(TeapotPosition.y - m->my()) ? (TeapotPosition.y - m->my()) * m->py() * Sign(TeapotPosition.y - m->my()) : 0;
-	float mtz = Sign(m->pz()) == Sign(TeapotPosition.z - m->mz()) ? (TeapotPosition.z - m->mz()) * m->pz() * Sign(TeapotPosition.z - m->mz()) : 0;
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
+		if ((*it)->IsDrawable3D())
+		{
 
-	D3DXMatrixTranslation(&MT,
-		mtx,
-		mty,
-		mtz);
+			D3DXMATRIXA16 matWorld_YPR;
+			D3DXMatrixRotationYawPitchRoll(&matWorld_YPR, (FLOAT)(*it)->GetYaw(), (FLOAT)(*it)->GetPitch(), (FLOAT)(*it)->GetRoll());
+			//MT is the Mirror Transition. That is: the distance the object is relative to the mirror. Tip->Tail, Obj->Mirror
+			float mtx = Sign(m->px()) == Sign((*it)->GetX() - m->mx()) ? ((*it)->GetX() - m->mx()) * m->px() * Sign((*it)->GetX() - m->mx()) : 0;
+			float mty = Sign(m->py()) == Sign((*it)->GetY() - m->my()) ? ((*it)->GetY() - m->my()) * m->py() * Sign((*it)->GetY() - m->my()) : 0;
+			float mtz = Sign(m->pz()) == Sign((*it)->GetZ() - m->mz()) ? ((*it)->GetZ() - m->mz()) * m->pz() * Sign((*it)->GetZ() - m->mz()) : 0;
 
-	D3DXMatrixTranslation(&T,
-		TeapotPosition.x,
-		TeapotPosition.y,
-		TeapotPosition.z);
+			D3DXMatrixTranslation(&MT,
+				mtx,
+				mty,
+				mtz);
 
-	W = MT * R * T;
+			D3DXMatrixTranslation(&T,
+				(*it)->GetX(),
+				(*it)->GetY(),
+				(*it)->GetZ());
 
-	// clear depth buffer and blend the reflected teapot with the mirror
-	g_pDevice->Clear(0, 0, D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
-	g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_DESTCOLOR);
-	g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+			W = matWorld_YPR * MT * R * T;
 
-	if ((mtx || mty || mtz) && camV_x * m->px() + camV_y * m->py() + camV_z * m->pz() < 0)
-	{
-		// Finally, draw the reflected teapot
-		g_pDevice->SetTransform(D3DTS_WORLD, &W);
-		g_pDevice->SetMaterial(&TeapotMtrl);
-		g_pDevice->SetTexture(0, 0);
+			// clear depth buffer and blend the reflected teapot with the mirror
+			g_pDevice->Clear(0, 0, D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_DESTCOLOR);
+			g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
 
-		g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-		Teapot->DrawSubset(0);
+			if ((mtx || mty || mtz) && camV_x * m->px() + camV_y * m->py() + camV_z * m->pz() < 0)
+			{
+				// Finally, draw the reflected teapot
+				// Meshes are divided into subsets, one for each material. Render them in a loop
+				for (DWORD i = 0; i < (*it)->GetModel()->NumMaterials(); i++)
+				{
+					// Set the material and texture for this subset
+					g_pDevice->SetTransform(D3DTS_WORLD, &W);
+					g_pDevice->SetMaterial(&((*it)->GetModel()->GetMaterial())[i]);
+					g_pDevice->SetTexture(0, (*it)->GetModel()->GetTexture()[i]);
+
+					// Draw the mesh subset
+					g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+					(*it)->GetModel()->GetMesh()->DrawSubset(i);
+				}
+			}
+		}
 	}
 
 	// Restore render states.

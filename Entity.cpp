@@ -202,6 +202,21 @@ double Entity::GetZ()
 	return mZ;
 }
 
+double Entity::GetYaw()
+{
+	return mYaw;
+}
+
+double Entity::GetPitch()
+{
+	return mPitch;
+}
+
+double Entity::GetRoll()
+{
+	return mRoll;
+}
+
 int Entity::BehaviorLoop()
 {
 	return 0;

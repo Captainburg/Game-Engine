@@ -119,6 +119,12 @@ public:
 	*/
 	double GetZ();
 
+	double GetYaw();
+
+	double GetPitch();
+
+	double GetRoll();
+
 	/** Behavior Loop
 	*
 	* To be overwritten by child classes, and called by the GameLoop().

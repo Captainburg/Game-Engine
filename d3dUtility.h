@@ -17,7 +17,7 @@
 #include <string>
 #include <limits>
 
-#define Sign(x) (x > 0) - (x < 0)
+static int Sign(float x) { return (x > 0) - (x < 0); }
 
 //
 // Classes and Structures

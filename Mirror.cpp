@@ -15,37 +15,37 @@ Mirror::~Mirror()
 {
 }
 
-inline float Mirror::px()
+float Mirror::px()
 {
 	return planex;
 }
 
-inline float Mirror::py()
+float Mirror::py()
 {
 	return planey;
 }
 
-inline float Mirror::pz()
+float Mirror::pz()
 {
 	return planez;
 }
 
-inline float Mirror::mx()
+float Mirror::mx()
 {
 	return mirrorx;
 }
 
-inline float Mirror::my()
+float Mirror::my()
 {
 	return mirrory;
 }
 
-inline float Mirror::mz()
+float Mirror::mz()
 {
 	return mirrorz;
 }
 
-inline unsigned int Mirror::rN()
+unsigned int Mirror::rN()
 {
 	return rectNum;
 }

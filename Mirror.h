@@ -5,13 +5,13 @@ public:
 	Mirror(float px, float py, float pz, float mx, float my, float mz, unsigned int rN);
 	virtual ~Mirror();
 
-	inline float px();
-	inline float py();
-	inline float pz();
+	float px();
+	float py();
+	float pz();
 
-	inline float mx();
-	inline float my();
-	inline float mz();
+	float mx();
+	float my();
+	float mz();
 
 	unsigned int rN();
 

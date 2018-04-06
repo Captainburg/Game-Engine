@@ -62,7 +62,7 @@ void Game::GameLoop()
 	gfx.Lights_Behavior();
 
 	//Draw the Screen
-	gfx.Render(entities);
+	gfx.Render(entities, mirrors);
 }
 
 void Game::GameShutdown()
