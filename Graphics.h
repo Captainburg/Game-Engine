@@ -1,4 +1,5 @@
 #pragma once
+#include "Mirror.h"
 #include "Font.h"
 #include "GameClasses.h"
 #include <vector>
@@ -27,6 +28,7 @@ public:
 	* @return null
 	*/
 	void GraphicsInit(HWND hwnd);
+	void InitMirrors();
 	bool InitParticles();
 	/** Graphics Initalization
 	*
@@ -43,12 +45,15 @@ public:
 	* @return null
 	*/
 	void Render(std::vector<Entity*> entities);
+	void DrawCube();
 	/** getDevice
 	*
 	* Gets the device context.
 	*
 	* @return the device context.
 	*/
+	void RenderMirror(Mirror * m, float camV_x, float camV_y, float camV_z);
+
 	LPDIRECT3DDEVICE9 getDevice();
 
 	bool GetRay(int x, int y, BoundingSphere BSphere);
@@ -124,6 +129,11 @@ private:
 
 	double cam_spin;
 	double cam_angle;
+
+	//Mirror Stuff
+	LPDIRECT3DVERTEXBUFFER9 mirrorVertices;
+	IDirect3DTexture9* MirrorTex;
+	D3DMATERIAL9 MirrorMtrl;
 
 	//Benchmarking
 	int FPS;

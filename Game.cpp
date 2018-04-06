@@ -16,16 +16,24 @@ void Game::GameInit(HWND hwnd)
 
 	//Initialize Entities
 	Model* tigerModel = new Model("tiger2.x", gfx.getDevice());
-	CreateInstance(new Tiger(0, 0, 0, tigerModel, 0));
+	CreateInstance(new Tiger(0, 0, 10, tigerModel, 0));
 
 	Model* planeModel = new Model("airplane2.x", gfx.getDevice());
-	CreateInstance(new Plane(0, 0, -25, planeModel, 0));
+	CreateInstance(new Plane(0, 0, -20, planeModel, 0));
 
 	Model* droneModel = new Model("EvilDrone.x", gfx.getDevice());
-	CreateInstance(new Drone(5, 0, -10, droneModel, 0));
+	CreateInstance(new Drone(10, 0, 0, droneModel, 0));
 
 	Model* globeModel = new Model("sphere.x", gfx.getDevice());
-	CreateInstance(new Globe(-5, 0, -10, globeModel, 0));
+	CreateInstance(new Globe(-10, 0, 0, globeModel, 0));
+
+	//Initialize Mirrors (Still hardcoded in Vertex Values)
+	CreateMirror(new Mirror(0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 2.5f, 0));//Front
+	CreateMirror(new Mirror(-2.0f, 0.0f, 0.0f, -2.5f, 0.0f, 0.0f, 6));//Right
+	CreateMirror(new Mirror(2.0f, 0.0f, 0.0f , 2.5f, 0.0f, 0.0f, 12));//Left
+	CreateMirror(new Mirror(0.0f, 0.0f, -2.0f, 0.0f, 0.0f, -2.5f, 18));//Back
+	CreateMirror(new Mirror(0.0f, 2.0f, 0.0f, 0.0f, 2.5f, 0.0f, 24));//Top
+	CreateMirror(new Mirror(0.0f, -2.0f, 0.0f, 0.0f, -2.5f, 0.0f, 30));//Bottom
 }
 
 void Game::GameLoop()
@@ -73,6 +81,11 @@ void Game::CreateInstance(Entity* entity)
 	entities.push_back(entity);
 }
 
+void Game::CreateMirror(Mirror* mirror)
+{
+	mirrors.push_back(mirror);
+}
+
 void Game::GetRay(int x, int y)
 {
 	selected = 0;
@@ -83,7 +96,7 @@ void Game::GetRay(int x, int y)
 		{
 			if (gfx.GetRay(x, y, *(*it)->GetModel()->GetBSphere()))
 			{
-				float dist = gfx.DistanceToCamera((*it)->GetX(), (*it)->GetY(), (*it)->GetZ());
+				float dist = gfx.DistanceToCamera((FLOAT)(*it)->GetX(), (FLOAT)(*it)->GetY(), (FLOAT)(*it)->GetZ());
 				if (dist < closest)
 				{
 					selected = (*it);

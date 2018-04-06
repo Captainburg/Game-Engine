@@ -146,6 +146,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Microsoft DirectX SDK 2010\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxguid.lib;winmm.lib;odbc32.lib;d3d9.lib;d3dx9.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -161,6 +162,7 @@
     <ClCompile Include="Globe.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="pSystem.cpp" />
@@ -178,6 +180,7 @@
     <ClInclude Include="GameMacros.h" />
     <ClInclude Include="Globe.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Mirror.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="pSystem.h" />

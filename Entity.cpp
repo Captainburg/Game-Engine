@@ -45,7 +45,7 @@ Entity::Entity(double x, double y, double z, Model* model, int initHealth)
 	else {
 		bDrawable = true;
 		b3D = true;
-		GetModel()->GetBSphere()->_center = D3DXVECTOR3(GetX(), GetY(), GetZ());
+		GetModel()->GetBSphere()->_center = D3DXVECTOR3((FLOAT)GetX(), (FLOAT)GetY(), (FLOAT)GetZ());
 	}
 
 	//Logic Related
@@ -71,11 +71,11 @@ void Entity::SetupMatrices(LPDIRECT3DDEVICE9 g_pDevice, double cam_x, double cam
 
 	//Get Location
 	D3DXMATRIXA16 matWorld_XYZ;
-	D3DXMatrixTranslation(&matWorld_XYZ, mX, mY, mZ);
+	D3DXMatrixTranslation(&matWorld_XYZ, (FLOAT)mX, (FLOAT)mY, (FLOAT)mZ);
 
 	//Get Rotation
 	D3DXMATRIXA16 matWorld_YPR;
-	D3DXMatrixRotationYawPitchRoll(&matWorld_YPR, mYaw, mPitch, mRoll);
+	D3DXMatrixRotationYawPitchRoll(&matWorld_YPR, (FLOAT)mYaw, (FLOAT)mPitch, (FLOAT)mRoll);
 
 	//Get Net Transform
 	D3DXMatrixMultiply(&matWorld_Net, &matWorld_YPR, &matWorld_XYZ);
@@ -88,8 +88,8 @@ void Entity::SetupMatrices(LPDIRECT3DDEVICE9 g_pDevice, double cam_x, double cam
 	// origin, and define "up" to be in the y-direction.
 	double yWeakness = 1 - pow(fabs(cam_angle - 0.5) * 2, 2);
 
-	D3DXVECTOR3 vEyePt(cam_x, cam_y, cam_z);
-	D3DXVECTOR3 vLookatPt(cam_x + sin(cam_spin * D3DX_PI * 2) * yWeakness, cam_y + cos(cam_angle * D3DX_PI), cam_z + sin((cam_spin - 0.25) * D3DX_PI * 2) * yWeakness);
+	D3DXVECTOR3 vEyePt((FLOAT)cam_x, (FLOAT)cam_y, (FLOAT)cam_z);
+	D3DXVECTOR3 vLookatPt((FLOAT)(cam_x + sin(cam_spin * D3DX_PI * 2) * yWeakness), (FLOAT)(cam_y + cos(cam_angle * D3DX_PI)), (FLOAT)(cam_z + sin((cam_spin - 0.25) * D3DX_PI * 2) * yWeakness));
 	D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
 	D3DXMATRIXA16 matView;
 	

@@ -11,12 +11,15 @@ Graphics::Graphics()
 	, lastFrame(GetTickCount())
 	, font(0)
 	, cam_x(0)
-	, cam_y(4)
-	, cam_z(5)
+	, cam_y(7)
+	, cam_z(15)
 	, cam_spin(0)
 	, cam_angle(0.64)
 	, bSelected(false)
 	, Sno(0)
+	, mirrorVertices(0)
+	, MirrorTex(0)
+	, MirrorMtrl(WHITE_MTRL)
 {
 }
 
@@ -26,11 +29,11 @@ Graphics::~Graphics()
 
 float Graphics::DistanceToCamera(float x, float y, float z)
 {
-	float x_diff = x - cam_x;
-	float y_diff = y - cam_y;
-	float z_diff = z - cam_z;
+	double x_diff = x - cam_x;
+	double y_diff = y - cam_y;
+	double z_diff = z - cam_z;
 
-	return sqrt(sqrt(x_diff * x_diff + y_diff * y_diff) * sqrt(x_diff * x_diff + y_diff * y_diff) + z_diff * z_diff);
+	return (float)sqrt(sqrt(x_diff * x_diff + y_diff * y_diff) * sqrt(x_diff * x_diff + y_diff * y_diff) + z_diff * z_diff);
 }
 
 // this is the function that sets up the lights and materials
@@ -225,8 +228,88 @@ void Graphics::GraphicsInit(HWND hwnd)
 	font->LoadAlphabet("Alphabet vSmall.bmp", 8, 16);
 	InitLights();
 	InitParticles();
+	InitMirrors();
 }
 
+void Graphics::InitMirrors()
+{
+	g_pDevice->CreateVertexBuffer(
+		36 * sizeof(Vertex),
+		0, // usage
+		Vertex::FVF,
+		D3DPOOL_MANAGED,
+		&mirrorVertices,
+		0);
+
+	Vertex* v = 0;
+	mirrorVertices->Lock(0, 0, (void**)&v, 0);
+
+	// mirror (front)
+	v[0] = Vertex(2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[1] = Vertex(2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[2] = Vertex(-2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+
+	v[3] = Vertex(2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[4] = Vertex(-2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[5] = Vertex(-2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+
+	// mirror (right)
+	v[6] = Vertex(-2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[7] = Vertex(-2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[8] = Vertex(-2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+
+	v[9] = Vertex(-2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[10] = Vertex(-2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[11] = Vertex(-2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+
+	// mirror (left)
+	v[12] = Vertex(2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[13] = Vertex(2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[14] = Vertex(2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+
+	v[15] = Vertex(2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[16] = Vertex(2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[17] = Vertex(2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+
+	// mirror (back)
+	v[18] = Vertex(-2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[19] = Vertex(-2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[20] = Vertex(2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+
+	v[21] = Vertex(-2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[22] = Vertex(2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[23] = Vertex(2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+
+	// mirror (top)
+	v[24] = Vertex(2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);//Close Left
+	v[25] = Vertex(2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);//Far Left
+	v[26] = Vertex(-2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);//Far Right
+
+	v[27] = Vertex(2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);//Close Left
+	v[28] = Vertex(-2.5f, 2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);//Far Right
+	v[29] = Vertex(-2.5f, 2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);//Close Right
+
+	// mirror (bottom)
+	v[30] = Vertex(2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);//Far Left
+	v[31] = Vertex(2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);//Close Left
+	v[32] = Vertex(-2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);//Close Right
+
+	v[33] = Vertex(2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);//Far Left
+	v[34] = Vertex(-2.5f, -2.5f, 2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);//Close Right
+	v[35] = Vertex(-2.5f, -2.5f, -2.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);//Far Right
+
+	mirrorVertices->Unlock();
+
+	//
+	// Load Textures, set filters.
+	//
+
+	D3DXCreateTextureFromFile(g_pDevice, "ice.bmp", &MirrorTex);
+
+	g_pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	g_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	g_pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+}
 
 bool Graphics::InitParticles()
 {
@@ -274,6 +357,8 @@ void Graphics::GraphicsShutdown()
 	{
 		font->UnloadAlphabet();
 	}
+	Release<LPDIRECT3DVERTEXBUFFER9>(mirrorVertices);
+	Release<IDirect3DTexture9*>(MirrorTex);
 	Delete<PSystem*>(Sno);
 }
 
@@ -299,7 +384,6 @@ void Graphics::Render(std::vector<Entity*> entities)
 	LPDIRECT3DSURFACE9 pSurface = 0;
 
 	//---DRAW BITMAP BLOCK---//
-
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
 		if ((*it)->IsDrawable2D())
 		{
@@ -323,8 +407,8 @@ void Graphics::Render(std::vector<Entity*> entities)
 			pSurface = 0;
 		}
 	}
-	//---DRAW MODEL BLOCK---//
 
+	//---DRAW MODEL BLOCK---//
 	g_pDevice->BeginScene();
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
 		if ((*it)->IsDrawable3D())
@@ -341,22 +425,18 @@ void Graphics::Render(std::vector<Entity*> entities)
 
 				// Draw the mesh subset
 				(*it)->GetModel()->GetMesh()->DrawSubset(i);
-
-				// Render the bounding sphere with alpha blending so we can see through it.
-				/*g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
-				g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-				g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-				D3DMATERIAL9 blue = BLUE_MTRL;
-				blue.Diffuse.a = 0.25f; // 25% opacity
-				g_pDevice->SetMaterial(&blue);
-				(*it)->GetModel()->GetSphere()->DrawSubset(0);
-
-				g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);*/
 			}
-
 		}
 	}
+
+	//---DRAW MIRRORS BLOCK---//
+	//Draw Mirror Cube
+	DrawCube();
+
+	//Draw Reflections
+	//CONTINUE HERE
+
+	//---DRAW PARTICLES BLOCK---//
 	D3DXMATRIXA16 snowWorld;
 	D3DXMatrixTranslation(&snowWorld, 0, 0, 0);
 	g_pDevice->SetTransform(D3DTS_WORLD, &snowWorld);
@@ -365,7 +445,6 @@ void Graphics::Render(std::vector<Entity*> entities)
 	g_pDevice->EndScene();
 
 	//---DRAW TEXT BLOCK---//
-
 	//Lock the back surface
 	pBackSurf->LockRect(&LockedRect, NULL, 0);
 
@@ -396,6 +475,113 @@ void Graphics::Render(std::vector<Entity*> entities)
 		lastFrame = GetTickCount();
 	}
 	frameCount++;
+}
+
+void Graphics::RenderMirror(Mirror* m, float camV_x, float camV_y, float camV_z)
+{
+	//
+	// Draw Mirror quad to stencil buffer ONLY.  In this way
+	// only the stencil bits that correspond to the mirror will
+	// be on.  Therefore, the reflected teapot can only be rendered
+	// where the stencil bits are turned on, and thus on the mirror 
+	// only.
+	//
+
+	g_pDevice->SetRenderState(D3DRS_STENCILENABLE, true);
+	g_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+	g_pDevice->SetRenderState(D3DRS_STENCILREF, 0x1);
+	g_pDevice->SetRenderState(D3DRS_STENCILMASK, 0xffffffff);
+	g_pDevice->SetRenderState(D3DRS_STENCILWRITEMASK, 0xffffffff);
+	g_pDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+	g_pDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+	g_pDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
+
+	// disable writes to the depth and back buffers
+	g_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, false);
+	g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+	g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	// draw the mirror to the stencil buffer
+	g_pDevice->SetStreamSource(0, mirrorVertices, 0, sizeof(Vertex));
+	g_pDevice->SetFVF(Vertex::FVF);
+	g_pDevice->SetMaterial(&MirrorMtrl);
+	g_pDevice->SetTexture(0, MirrorTex);
+	D3DXMATRIX I;
+	D3DXMatrixIdentity(&I);
+	g_pDevice->SetTransform(D3DTS_WORLD, &I);
+
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, m->rN(), 2);
+
+	// re-enable depth writes
+	g_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, true);
+
+	// only draw reflected teapot to the pixels where the mirror was drawn to.
+	g_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_EQUAL);
+	g_pDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+
+	// position reflection
+	D3DXMATRIX W, T, R, MT;
+	D3DXPLANE plane(m->px(), m->py(), m->pz(), 0.0f); // xy plane
+	D3DXMatrixReflect(&R, &plane);
+
+	//MT is the Mirror Transition. That is: the distance the object is relative to the mirror. Tip->Tail, Obj->Mirror
+	float mtx = Sign(m->px()) == Sign(TeapotPosition.x - m->mx()) ? (TeapotPosition.x - m->mx()) * m->px() * Sign(TeapotPosition.x - m->mx()) : 0;
+	float mty = Sign(m->py()) == Sign(TeapotPosition.y - m->my()) ? (TeapotPosition.y - m->my()) * m->py() * Sign(TeapotPosition.y - m->my()) : 0;
+	float mtz = Sign(m->pz()) == Sign(TeapotPosition.z - m->mz()) ? (TeapotPosition.z - m->mz()) * m->pz() * Sign(TeapotPosition.z - m->mz()) : 0;
+
+	D3DXMatrixTranslation(&MT,
+		mtx,
+		mty,
+		mtz);
+
+	D3DXMatrixTranslation(&T,
+		TeapotPosition.x,
+		TeapotPosition.y,
+		TeapotPosition.z);
+
+	W = MT * R * T;
+
+	// clear depth buffer and blend the reflected teapot with the mirror
+	g_pDevice->Clear(0, 0, D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+	g_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_DESTCOLOR);
+	g_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+
+	if ((mtx || mty || mtz) && camV_x * m->px() + camV_y * m->py() + camV_z * m->pz() < 0)
+	{
+		// Finally, draw the reflected teapot
+		g_pDevice->SetTransform(D3DTS_WORLD, &W);
+		g_pDevice->SetMaterial(&TeapotMtrl);
+		g_pDevice->SetTexture(0, 0);
+
+		g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+		Teapot->DrawSubset(0);
+	}
+
+	// Restore render states.
+	g_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	g_pDevice->SetRenderState(D3DRS_STENCILENABLE, false);
+	g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+}
+
+void Graphics::DrawCube()
+{
+	D3DXMATRIX I;
+	D3DXMatrixIdentity(&I);
+	g_pDevice->SetTransform(D3DTS_WORLD, &I);
+
+	g_pDevice->SetStreamSource(0, mirrorVertices, 0, sizeof(Vertex));
+	g_pDevice->SetFVF(Vertex::FVF);
+
+	// draw the mirror
+	g_pDevice->SetMaterial(&MirrorMtrl);
+	g_pDevice->SetTexture(0, MirrorTex);
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 30, 2);
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 24, 2);
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 18, 2);
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 12, 2);
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 6, 2);
+	g_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 }
 
 LPDIRECT3DDEVICE9 Graphics::getDevice()

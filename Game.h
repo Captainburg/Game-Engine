@@ -43,10 +43,14 @@ public:
 	inline void CreateInstance(Entity* entity);
 	//void DestroyInstance(...);
 
+	inline void CreateMirror(Mirror* mirror);
+	//void DestroyInstance(...);
+
 	void GetRay(int x, int y);
 
 private:
 	Graphics gfx;
 	Entity* selected;
 	std::vector<Entity*> entities;
+	std::vector<Mirror*> mirrors;
 };

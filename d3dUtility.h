@@ -17,9 +17,29 @@
 #include <string>
 #include <limits>
 
+#define Sign(x) (x > 0) - (x < 0)
+
 //
-// Cleanup
+// Classes and Structures
 //
+struct Vertex
+{
+	Vertex() {}
+	Vertex(float x, float y, float z,
+		float nx, float ny, float nz,
+		float u, float v)
+	{
+		_x = x;  _y = y;  _z = z;
+		_nx = nx; _ny = ny; _nz = nz;
+		_u = u;  _v = v;
+	}
+	float _x, _y, _z;
+	float _nx, _ny, _nz;
+	float _u, _v;
+
+	static const DWORD FVF;
+};
+
 template<class T> void Release(T t)
 {
 	if (t)
@@ -100,24 +120,6 @@ struct Ray
 
 //const float INFINITY = FLT_MAX;
 const float EPSILON = 0.001f;
-
-struct Vertex
-{
-	Vertex() {}
-	Vertex(float x, float y, float z,
-		float nx, float ny, float nz,
-		float u, float v)
-	{
-		_x = x;  _y = y;  _z = z;
-		_nx = nx; _ny = ny; _nz = nz;
-		_u = u;  _v = v;
-	}
-	float _x, _y, _z;
-	float _nx, _ny, _nz;
-	float _u, _v;
-
-	static const DWORD FVF;
-};
 
 float GetRandomFloat(float lowBound, float highBound);
 

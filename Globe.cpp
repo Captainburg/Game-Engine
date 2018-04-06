@@ -81,6 +81,6 @@ int Globe::BehaviorLoop()
 		mRoll += 0.03;
 	}
 
-	GetModel()->GetBSphere()->_center = D3DXVECTOR3(GetX(), GetY(), GetZ());
+	GetModel()->GetBSphere()->_center = D3DXVECTOR3((FLOAT)GetX(), (FLOAT)GetY(), (FLOAT)GetZ());
 	return 0;
 }
