@@ -154,41 +154,42 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="d3dUtility.cpp" />
-    <ClCompile Include="Drone.cpp" />
+    <ClCompile Include="Rendering\d3dUtility.cpp" />
+    <ClCompile Include="CustomClasses\Drone.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="Rendering\Font.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Globe.cpp" />
-    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="CustomClasses\Globe.cpp" />
+    <ClCompile Include="Rendering\Graphics.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Mirror.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="pSystem.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Tiger.cpp" />
-    <ClCompile Include="WindowBox.cpp" />
+    <ClCompile Include="Rendering\Mirror.cpp" />
+    <ClCompile Include="Rendering\Model.cpp" />
+    <ClCompile Include="CustomClasses\Plane.cpp" />
+    <ClCompile Include="Rendering\pSystem.cpp" />
+    <ClCompile Include="Rendering\Sprite.cpp" />
+    <ClCompile Include="CustomClasses\Tiger.cpp" />
+    <ClCompile Include="Rendering\WindowBox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="d3dUtility.h" />
-    <ClInclude Include="Drone.h" />
+    <ClInclude Include="Rendering\d3dUtility.h" />
+    <ClInclude Include="CustomClasses\Drone.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="Font.h" />
+    <ClInclude Include="Rendering\Font.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClasses.h" />
     <ClInclude Include="GameMacros.h" />
-    <ClInclude Include="Globe.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Mirror.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Plane.h" />
-    <ClInclude Include="pSystem.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Tiger.h" />
-    <ClInclude Include="WindowBox.h" />
+    <ClInclude Include="CustomClasses\Globe.h" />
+    <ClInclude Include="Rendering\Graphics.h" />
+    <ClInclude Include="Rendering\Mirror.h" />
+    <ClInclude Include="Rendering\Model.h" />
+    <ClInclude Include="CustomClasses\Plane.h" />
+    <ClInclude Include="Rendering\pSystem.h" />
+    <ClInclude Include="Rendering\Sprite.h" />
+    <ClInclude Include="CustomClasses\Tiger.h" />
+    <ClInclude Include="Rendering\WindowBox.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="README.txt" />
     <Text Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

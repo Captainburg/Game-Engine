@@ -15,63 +15,54 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WindowBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="CustomClasses\Drone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="CustomClasses\Globe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tiger.cpp">
+    <ClCompile Include="CustomClasses\Tiger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Plane.cpp">
+    <ClCompile Include="CustomClasses\Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3dUtility.cpp">
+    <ClCompile Include="Rendering\WindowBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Globe.cpp">
+    <ClCompile Include="Rendering\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Drone.cpp">
+    <ClCompile Include="Rendering\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pSystem.cpp">
+    <ClCompile Include="Rendering\Mirror.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mirror.cpp">
+    <ClCompile Include="Rendering\Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\d3dUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\pSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameMacros.h">
@@ -80,38 +71,48 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tiger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameClasses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plane.h">
+    <ClInclude Include="CustomClasses\Drone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3dUtility.h">
+    <ClInclude Include="CustomClasses\Globe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Globe.h">
+    <ClInclude Include="CustomClasses\Tiger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Drone.h">
+    <ClInclude Include="CustomClasses\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pSystem.h">
+    <ClInclude Include="Rendering\WindowBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mirror.h">
+    <ClInclude Include="Rendering\Sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\Mirror.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\d3dUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\pSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />
+    <Text Include="README.txt" />
   </ItemGroup>
 </Project>

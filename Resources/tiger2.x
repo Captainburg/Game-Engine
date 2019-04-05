@@ -2858,7 +2858,7 @@ Frame MeshData {
     0.000000;0.000000;0.000000;;
 
     TextureFilename {
-     "tiger.bmp";
+     "Resources/tiger.bmp";
     }
    }
   }

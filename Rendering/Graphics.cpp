@@ -235,7 +235,7 @@ void Graphics::GraphicsInit(HWND hwnd)
 	g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 	InitDirect3DDevice(g_hWndMain, RESOLUTION_X, RESOLUTION_Y, IS_WINDOWED, D3DFMT_X8R8G8B8, g_pD3D, &g_pDevice);
 	font = new Font(g_pDevice);
-	font->LoadAlphabet("Alphabet vSmall.bmp", 8, 16);
+	font->LoadAlphabet("Resources/Alphabet vSmall.bmp", 8, 16);
 	InitLights();
 	InitParticles();
 	InitMirrors();
@@ -314,7 +314,7 @@ void Graphics::InitMirrors()
 	// Load Textures, set filters.
 	//
 
-	D3DXCreateTextureFromFile(g_pDevice, "ice.bmp", &MirrorTex);
+	D3DXCreateTextureFromFile(g_pDevice, "Resources/ice.bmp", &MirrorTex);
 
 	g_pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	g_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -334,7 +334,7 @@ bool Graphics::InitParticles()
 	boundingBox->_min = D3DXVECTOR3(-40.0f, -40.0f, -40.0f);
 	boundingBox->_max = D3DXVECTOR3(40.0f, 40.0f, 40.0f);
 	Sno = new Snow(boundingBox, 5000);
-	Sno->init(g_pDevice, "snowflake.dds");
+	Sno->init(g_pDevice, "Resources/snowflake.dds");
 
 	//
 	// Set projection matrix.

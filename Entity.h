@@ -1,6 +1,6 @@
 #pragma once
-#include "Sprite.h"
-#include "Model.h"
+#include "Rendering/Sprite.h"
+#include "Rendering/Model.h"
 
 class Entity {
 public:

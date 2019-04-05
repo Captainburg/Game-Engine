@@ -1334,7 +1334,7 @@ Frame SCENE_ROOT {
      0.000000;0.000000;0.000000;;
 
      TextureFilename {
-      "bihull.bmp";
+      "Resources/bihull.bmp";
      }
     }
    }
@@ -2678,7 +2678,7 @@ Frame SCENE_ROOT {
      0.000000;0.000000;0.000000;;
 
      TextureFilename {
-      "bihull.bmp";
+      "Resources/bihull.bmp";
      }
     }
    }
@@ -3937,7 +3937,7 @@ Frame SCENE_ROOT {
      0.000000;0.000000;0.000000;;
 
      TextureFilename {
-      "wings.bmp";
+      "Resources/wings.bmp";
      }
     }
    }
@@ -4794,7 +4794,7 @@ Frame SCENE_ROOT {
      0.000000;0.000000;0.000000;;
 
      TextureFilename {
-      "bihull.bmp";
+      "Resources/bihull.bmp";
      }
     }
    }
@@ -5456,7 +5456,7 @@ Frame SCENE_ROOT {
      0.000000;0.000000;0.000000;;
 
      TextureFilename {
-      "bihull.bmp";
+      "Resources/bihull.bmp";
      }
     }
    }
@@ -6537,7 +6537,7 @@ Frame SCENE_ROOT {
      0.000000;0.000000;0.000000;;
 
      TextureFilename {
-      "bihull.bmp";
+      "Resources/bihull.bmp";
      }
     }
    }

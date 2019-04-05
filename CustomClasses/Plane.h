@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity.h"
+#include "..\Entity.h"
 
 class Plane : public Entity {
 public:

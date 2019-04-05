@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "Game.h"
+#include "..\Game.h"
 
 class WindowBox {
 public:

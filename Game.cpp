@@ -15,16 +15,16 @@ void Game::GameInit(HWND hwnd)
 	gfx.GraphicsInit(hwnd);
 
 	//Initialize Entities
-	Model* tigerModel = new Model("tiger2.x", gfx.getDevice());
+	Model* tigerModel = new Model("Resources/tiger2.x", gfx.getDevice());
 	CreateInstance(new Tiger(0, 0, 10, tigerModel, 0));
 
-	Model* planeModel = new Model("airplane2.x", gfx.getDevice());
+	Model* planeModel = new Model("Resources/airplane2.x", gfx.getDevice());
 	CreateInstance(new Plane(0, 0, -20, planeModel, 0));
 
 	Model* droneModel = new Model("EvilDrone.x", gfx.getDevice());
 	CreateInstance(new Drone(10, 0, 0, droneModel, 0));
 
-	Model* globeModel = new Model("sphere.x", gfx.getDevice());
+	Model* globeModel = new Model("Resources/sphere.x", gfx.getDevice());
 	CreateInstance(new Globe(-10, 0, 0, globeModel, 0));
 
 	//Initialize Mirrors (Still hardcoded in Vertex Values)

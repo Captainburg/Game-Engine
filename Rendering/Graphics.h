@@ -1,9 +1,9 @@
 #pragma once
 #include "Mirror.h"
 #include "Font.h"
-#include "GameClasses.h"
+#include "..\GameClasses.h"
 #include <vector>
-#include "GameMacros.h"
+#include "..\GameMacros.h"
 #include "psystem.h"
 #include <cstdlib>
 #include <ctime>

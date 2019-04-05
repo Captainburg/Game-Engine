@@ -1,5 +1,5 @@
 #pragma once
-#include "Tiger.h"
-#include "Plane.h"
-#include "Drone.h"
-#include "Globe.h"
+#include "CustomClasses/Tiger.h"
+#include "CustomClasses/Plane.h"
+#include "CustomClasses/Drone.h"
+#include "CustomClasses/Globe.h"

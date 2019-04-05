@@ -1,5 +1,5 @@
 #pragma once
-#include "Graphics.h"
+#include "Rendering/Graphics.h"
 
 class Game {
 public:

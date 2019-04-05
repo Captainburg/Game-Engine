@@ -1,5 +1,5 @@
 #include "WindowBox.h"
-#include "GameMacros.h"
+#include "../GameMacros.h"
 
 WindowBox::WindowBox(HINSTANCE hInstance, int iCmdShow)
 	: game()
