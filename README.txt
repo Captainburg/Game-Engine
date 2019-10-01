@@ -13,7 +13,7 @@ Space - Up
 
 ===LIGHTING CONTROLS===
 On/Off Keys
-0/p - Ambient
-9/o - Point
-8/i - Directional
-7u - Spot
+0/p - Ambient Light Keys
+9/o - Point Light Keys
+8/i - Directional Light Keys
+7/u - Spotlight Keys
